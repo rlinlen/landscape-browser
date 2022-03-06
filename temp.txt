@@ -1,0 +1,14 @@
+TODO:
+
+- Add tab support
+- Add open from other browser
+- Add open to other browser
+- Add favorite
+
+- add swipe show/hide
+
+
+stage 2:
+- Add reader mode
+- add theme change
+- add font size

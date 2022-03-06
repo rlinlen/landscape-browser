@@ -2,6 +2,7 @@ import { StyleSheet, Text, View , SafeAreaView } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { WebView } from 'react-native-webview';
+import { MenuProvider } from 'react-native-popup-menu';
 
 import Browser from './src/components/Browser';
 
@@ -15,9 +16,11 @@ export default function App() {
     //   <StatusBar style="auto" />
     // </View>
     <SafeAreaView style={styles.container}>
-      <View style={{ flex: 1 }}>
-        <Browser/>
-      </View>
+      <MenuProvider>
+        <View style={{ flex: 1 }}>
+          <Browser/>
+        </View>
+      </MenuProvider>
     </SafeAreaView>
   );
 }
