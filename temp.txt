@@ -1,14 +1,18 @@
 TODO:
 
 - Add tab support
-- Add open from other browser
-- Add open to other browser
-- Add favorite
 
-- add swipe show/hide
+- Add favorite
 
 
 stage 2:
 - Add reader mode
 - add theme change
 - add font size
+- Add open from other browser
+- Add open to other browser
+- support dark/light scheme https://docs.expo.dev/guides/color-schemes/#detecting-the-color-scheme
+
+
+Done:
+- add swipe show/hide

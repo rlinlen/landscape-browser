@@ -8,3 +8,5 @@ export const searchEngines = {
 
 export const defaultSearchEngine = 'google';
 export const defaultUrl = 'https://www.google.com'
+
+export const addressBarHeight = 40
