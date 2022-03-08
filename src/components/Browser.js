@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useContext, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Pressable } from 'react-native';
 import { WebView } from 'react-native-webview';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -10,15 +10,21 @@ import {
   MenuTrigger,
   renderers
 } from 'react-native-popup-menu';
-import * as Linking from "expo-linking";
 
 import { defaultUrl, searchEngines, defaultSearchEngine, addressBarHeight } from '../util/appConstant';
+import BrowserActionBar from './BrowserActionBar';
+import { Context as CurrentContext } from '../context/currentContext';
+import { Context as TabContext } from '../context/tabContext';
 
 
 
-const Browser = () => {
+const Browser = ({ initInfo }) => {
 
   const browserRef = useRef(null);
+
+  const { setHideSafeAreaButtom } = useContext(CurrentContext);
+  const { state: tabState, addNewTab, updateTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
+
 
   const [forceReload, setForceReload] = useState(false);
   const [navState, setNavState] = useState({});
@@ -36,12 +42,18 @@ const Browser = () => {
   //   setNewUrl(event.url);
   // }
 
+  useEffect(() => {
+    // console.log(initInfo)
+  })
   // useEffect(() => {
   //   Linking.addEventListener("url", handleDeepLink);
   //   return () => {
   //     Linking.removeEventListener("url");
   //   };
   // }, []);
+  // useEffect(() => {
+  //   setNewUrl()
+  // });
 
 
   async function changeScreenOrientation() {
@@ -89,10 +101,19 @@ const Browser = () => {
 
     setInputUrl(url);
 
-    setShowBar(true);
+
+    let updatedTab = {...initInfo, url, title}
+    updateTab(updatedTab)
+
+    showBottomBar(true);
   };
 
+  const showBottomBar = (isShowBottomBar) => {
 
+    setShowBar(isShowBottomBar);
+    setHideSafeAreaButtom(!isShowBottomBar)
+
+  }
   const handleUrlSubmit = () => {
 
     const newURL = upgradeURL(inputUrl, defaultSearchEngine);
@@ -114,26 +135,13 @@ const Browser = () => {
     return searchEngines[searchEngine](encodedURI);
   }
 
-  const handleGoBack = () => {
-    if (browserRef && navState?.canGoBack) {
-      browserRef.current.goBack();
-    }
-  }
-  const handleGoForward = () => {
-    if (browserRef && navState?.canGoForward) {
-      browserRef.current.goForward();
-    }
-  }
+
   const handleReload = () => {
     if (browserRef) {
       browserRef.current.reload();
     }
   }
-  const handleOpenUrlExternal = () => {
-    // console.log('currenturl')
-    // console.log(navState.url)
-    Linking.openURL(navState.url)
-  }
+
   const handleChangeIncognito = () => {
     setIncognito(!incognito);
     // if (browserRef) {
@@ -144,9 +152,9 @@ const Browser = () => {
   }
   const handleChangeContentMode = () => {
     // console.log(contentMode)
-    if (contentMode == 'desktop' || contentMode == 'recommended'){
+    if (contentMode == 'desktop' || contentMode == 'recommended') {
       setContentMode('mobile')
-    } else if (contentMode == 'mobile'){
+    } else if (contentMode == 'mobile') {
       setContentMode('desktop')
     }
     // if (browserRef) {
@@ -173,10 +181,11 @@ const Browser = () => {
     `
     browserRef.current.injectJavaScript(jsIncreaseFont);
   }
+
   const handleScroll = syntheticEvent => {
     // const { contentOffset } = syntheticEvent.nativeEvent
     // console.log(contentOffset);
-    
+
   }
   const handlePressIn = evt => {
     // console.log(evt.nativeEvent.locationY)
@@ -184,20 +193,20 @@ const Browser = () => {
   }
   const handlePressOut = evt => {
     // console.log(evt.nativeEvent.locationY)
-    try{
+    try {
       let scrollFinPos = evt?.nativeEvent.locationY ? evt?.nativeEvent.locationY : 0
       // console.log(scrollFinPos)
-      if (scrollInitPos && scrollFinPos ){
-        if (scrollFinPos - scrollInitPos > addressBarHeight){
+      if (scrollInitPos && scrollFinPos) {
+        if (scrollFinPos - scrollInitPos > addressBarHeight) {
           //scroll up
           // setIsScrollUp(true)
-          setShowBar(true)
+          showBottomBar(true)
         } else {
           // setIsScrollUp(false)
-          setShowBar(false)
+          showBottomBar(false)
         }
       }
-    } catch(error){
+    } catch (error) {
       console.log(error)
     }
   }
@@ -205,7 +214,7 @@ const Browser = () => {
   const optionsStyles = {
     optionsContainer: {
       backgroundColor: 'rgb(40,40,40)',
-      borderRadius:10,
+      borderRadius: 10,
       width: '100%'
       // padding: 5,
     },
@@ -229,12 +238,12 @@ const Browser = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      { showBar && <View style={[styles.browserTitleContainer, {height: addressBarHeight}]}>
-        <View style={{ paddingHorizontal:10}}>
+      {showBar && <View style={[styles.browserTitleContainer, { height: addressBarHeight }]}>
+        <View style={{ paddingHorizontal: 10 }}>
           <Menu
             renderer={renderers.Popover}
             rendererProps={{ placement: 'bottom' }}
-            // anchorStyle={{backgroundColor:'black'}}
+          // anchorStyle={{backgroundColor:'black'}}
           >
             <MenuTrigger>
               {/* <AntDesign name="setting" size={28} color="white" /> */}
@@ -266,7 +275,7 @@ const Browser = () => {
               </MenuOption>
               <MenuOption onSelect={handleChangeContentMode}>
                 <View style={styles.menuOption}>
-                  <Text style={styles.menuOptionText}>{['recommended','mobile'].includes(contentMode) ? 'Request Desktop Mode' : 'Request Mobile Mode'}</Text>
+                  <Text style={styles.menuOptionText}>{['recommended', 'mobile'].includes(contentMode) ? 'Request Desktop Mode' : 'Request Mobile Mode'}</Text>
                   <MaterialCommunityIcons name="desktop-mac" size={24} color="white" />
                 </View>
               </MenuOption>
@@ -285,7 +294,7 @@ const Browser = () => {
             onSubmitEditing={handleUrlSubmit}
           />
         </View>
-        <View style={{paddingHorizontal: 10}}>
+        <View style={{ paddingHorizontal: 10 }}>
           <TouchableOpacity
             // style={styles.changeOrientationButton}
             onPress={() => handleReload()}
@@ -296,59 +305,33 @@ const Browser = () => {
         {/* <Text style={styles.browserTitle}>
           </Text> */}
       </View>}
-      <View style={{flex:1}}>
-      <Pressable style={{flex:1}} onPressIn={handlePressIn} onPressOut={handlePressOut}>
-        <WebView
-          contentInset={{top:addressBarHeight}}
-          // automaticallyAdjustContentInsets={false}
-          contentInsetAdjustmentBehavior='scrollableAxes'
-          source={{ uri: newUrl ? newUrl : defaultUrl }}
-          style={{ flex: 1 }}
-          onNavigationStateChange={onNavigationStateChange}
-          incognito={incognito}
-          contentMode={contentMode}
-          allowsInlineMediaPlayback={true}
-          onScroll={handleScroll}
-          forceDarkOn={true}
-          allowsBackForwardNavigationGestures={true}
-          key={forceReload}
-          ref={browserRef}
-        />
-      </Pressable>
-      {showBar && <View style={styles.browserOpsContainer}>
-        <TouchableOpacity
-          // style={styles.changeOrientationButton}
-          onPress={() => handleGoBack()}
-        // disabled={!navState.canGoBack}
-        >
-          <AntDesign name="left" size={24} color={navState.canGoBack ? "white" : "#rgb(100,100,100)"} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          // style={styles.changeOrientationButton}
-          onPress={() => handleGoForward()}
-        >
-          <AntDesign name="right" size={24} color={navState.canGoForward ? "white" : "#rgb(100,100,100)"} />
-        </TouchableOpacity>
-        <TouchableOpacity
-        // style={styles.changeOrientationButton}
-          onPress={()=>handleOpenUrlExternal()}
-        >
-          {/* <AntDesign name="upload" size={24} color="white" /> */}
-          <MaterialCommunityIcons name="apple-safari" size={26} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity
-        // style={styles.changeOrientationButton}
-        // onPress={()=>handleGoForward()}
-        >
-          <AntDesign name="book" size={24} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity
-        // style={styles.changeOrientationButton}
-        // onPress={()=>handleGoForward()}
-        >
-          <AntDesign name="select1" size={24} color="white" />
-        </TouchableOpacity>
-      </View>}
+      <View style={{ flex: 1 }}>
+        <Pressable style={{ flex: 1 }} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+          <WebView
+            contentInset={{ top: addressBarHeight }}
+            // automaticallyAdjustContentInsets={false}
+            contentInsetAdjustmentBehavior='scrollableAxes'
+            // source={{ uri: newUrl ? newUrl : defaultUrl }}
+            source={{ uri: newUrl ? newUrl : initInfo.url }}
+            style={{ flex: 1 }}
+            onNavigationStateChange={onNavigationStateChange}
+            incognito={incognito}
+            contentMode={contentMode}
+            allowsInlineMediaPlayback={true}
+            onScroll={handleScroll}
+            forceDarkOn={true}
+            allowsBackForwardNavigationGestures={true}
+            key={forceReload}
+            ref={browserRef}
+          />
+        </Pressable>
+        {showBar &&
+          <BrowserActionBar
+            canGoForward={navState.canGoForward}
+            canGoBack={navState.canGoBack}
+            browserRef={browserRef}
+            url={navState.url}
+          />}
       </View>
 
     </View>
@@ -364,10 +347,10 @@ const styles = StyleSheet.create({
   },
   browserTitleContainer: {
     // flex: 1,
-    zIndex:1,
-    position:'absolute',
-    top:0,
-    width:'100%',
+    zIndex: 1,
+    position: 'absolute',
+    top: 0,
+    width: '100%',
     backgroundColor: 'rgba(76,76,76,1)',
     alignItems: 'center',
     // justifyContent: 'center',
@@ -379,19 +362,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     // backgroundColor: 'red'
     // color: 'white'
-  },
-
-  browserOpsContainer: {
-    // flex:1,
-    height: 40,
-    // position:'absolute',
-    // bottom:0,
-    backgroundColor: 'rgba(76,76,76,0.7)',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: '3%',
-    // zIndex:1
   },
   browserAddressBar: {
     // height: 40,
@@ -416,11 +386,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 10,
-    paddingVertical:10
+    paddingVertical: 10
     // width:'75%'
   },
-  menuOptionText:{
-    color:'white',
+  menuOptionText: {
+    color: 'white',
     paddingRight: 20,
     fontSize: 16
   }

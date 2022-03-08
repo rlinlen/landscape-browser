@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
-import { MenuProvider } from 'react-native-popup-menu';
 
-import Browser from './src/components/Browser';
+import Main from './src/components/Main';
+import { Provider as TabProvider } from './src/context/tabContext';
+import { Provider as CurrentProvider } from './src/context/currentContext';
 
 
 export default function App() {
@@ -12,27 +13,22 @@ export default function App() {
     //   <Text>Open up App.js to start working on your app!</Text>
     //   <StatusBar style="auto" />
     // </View>
-    <>
-      <SafeAreaView style={{ backgroundColor: 'rgba(0,0,0,0.7)' }} />
-
-      <MenuProvider>
-        <View style={{ flex: 1 }}>
-          <Browser />
-        </View>
-      </MenuProvider>
-      <SafeAreaView style={[styles.container, { position: "absolute" }]} />
-    </>
+    <CurrentProvider>
+      <TabProvider>
+        <Main/>
+      </TabProvider>
+    </CurrentProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 0,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    // backgroundColor:'transparent',
-    // position: "absolute",
-    // bottom:0
-    // alignItems: 'center',
-    // justifyContent: 'center',
-  },
+  // container: {
+  //   // flex: 0,
+  //   backgroundColor: 'rgba(0,0,0,0.7)',
+  //   // backgroundColor:'transparent',
+  //   // position: "absolute",
+  //   // bottom:0
+  //   // alignItems: 'center',
+  //   // justifyContent: 'center',
+  // },
 });
