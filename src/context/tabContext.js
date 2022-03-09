@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid';
+import { WebView } from 'react-native-webview';
 
 import createDataContext from './createDataContext';
 import { defaultUrl } from '../util/appConstant';
@@ -6,11 +7,14 @@ import { defaultUrl } from '../util/appConstant';
 const tabReducer = (state, action) => {
     switch (action.type) {
         case 'add_tab':
+            let url = action.payload ? action.payload : defaultUrl
+            // console.log(url)
             return [...state, {
-                url: defaultUrl,
+                url: url,
                 title: "",
-                id: uuid()
+                id: uuid(),
             }];
+            
         case 'update_tab':
             let objIndex = state.findIndex((obj => obj.id == action.payload.id));
             let updatedTab = Object.assign({}, state[objIndex])
@@ -26,8 +30,8 @@ const tabReducer = (state, action) => {
   };
 
 const addNewTab = dispatch => {
-  return () => {
-    dispatch({ type: 'add_tab' });
+  return (url) => {
+    dispatch({ type: 'add_tab', payload: url });
   };
 };
 

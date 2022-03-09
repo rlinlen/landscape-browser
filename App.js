@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import Main from './src/components/Main';
 import { Provider as TabProvider } from './src/context/tabContext';
 import { Provider as CurrentProvider } from './src/context/currentContext';
+import { Provider as FavoriteProvider } from './src/context/favoriteContext';
 
 
 export default function App() {
@@ -15,7 +16,9 @@ export default function App() {
     // </View>
     <CurrentProvider>
       <TabProvider>
-        <Main/>
+        <FavoriteProvider>
+          <Main />
+        </FavoriteProvider>
       </TabProvider>
     </CurrentProvider>
   );

@@ -15,6 +15,7 @@ import { defaultUrl, searchEngines, defaultSearchEngine, addressBarHeight } from
 import BrowserActionBar from './BrowserActionBar';
 import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext } from '../context/tabContext';
+import { Context as FavoriteContext } from '../context/favoriteContext';
 import BrowserAddressBar from './BrowserAddressBar';
 
 
@@ -25,6 +26,8 @@ const Browser = ({ initInfo }) => {
 
   const { setHideSafeAreaButtom } = useContext(CurrentContext);
   const { state: tabState, addNewTab, updateTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
+  const { addNewFav } = useContext(FavoriteContext);
+  
 
 
   const [forceReload, setForceReload] = useState(false);
@@ -213,6 +216,12 @@ const Browser = ({ initInfo }) => {
       console.log(error)
     }
   }
+  const handleAddFavorite = () => {
+    addNewFav({
+      url: navState.url,
+      title: navState.title
+    })
+  }
 
   const optionsStyles = {
     optionsContainer: {
@@ -282,6 +291,12 @@ const Browser = ({ initInfo }) => {
                   <MaterialCommunityIcons name="desktop-mac" size={24} color="white" />
                 </View>
               </MenuOption>
+              <MenuOption onSelect={handleAddFavorite}>
+                <View style={styles.menuOption}>
+                  <Text style={styles.menuOptionText}>Add Page to Favorite</Text>
+                  <MaterialCommunityIcons name="bookmark-check" size={24} color="white" />
+                </View>
+              </MenuOption>
             </MenuOptions>
           </Menu>
         </View>
@@ -306,6 +321,7 @@ const Browser = ({ initInfo }) => {
       </View>}
       <View style={{ flex: 1 }}>
         <Pressable style={{ flex: 1 }} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+          {/* {webView} */}
           <WebView
             contentInset={{ top: addressBarHeight }}
             // automaticallyAdjustContentInsets={false}

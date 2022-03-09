@@ -6,10 +6,10 @@ TODO:
 -- prevent tab reload when switching 
 -- tab navigate to correct position
 -- tab title wrap
+-- tab snapshot round
 
 - Add favorite
-
-- Add asyncstorage
+- Add asyncstorag
 
 - landscape optimize
 -- safeare

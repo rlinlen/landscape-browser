@@ -3,10 +3,11 @@ import { StyleSheet, SafeAreaView, View } from 'react-native';
 import { MenuProvider } from 'react-native-popup-menu';
 
 import Browser from './Browser';
-import BrowserActionBar from './BrowserActionBar';
 import TabView from './TabView';
+import FavoriteView from './FavoriteView'
 import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext} from '../context/tabContext';
+import { Context as FavoriteContext } from '../context/favoriteContext';
 
 const usePrevious = (value) => {
     const ref = useRef();
@@ -24,6 +25,7 @@ const Main = () => {
 
     const { state: currentState, setCurrentTab } = useContext(CurrentContext);
     const { state: tabState, addNewTab , deleteOneTab , deleteAllTabs } = useContext(TabContext);
+    const { state: favState, getAllFavs} = useContext(FavoriteContext);
 
     const prevTabState = usePrevious(tabState);
     useEffect(()=>{
@@ -36,9 +38,17 @@ const Main = () => {
         }
     },[tabState])
 
+    useEffect(()=>{
+        getAllFavs()
+    },[])
+
     let safeAreaPosition = currentState?.hideSafeAreaButtom ? 'absolute' : 'relative'
     let currentTab = currentState?.currentTab
     let enterTabSelect = currentState?.enterTabSelect
+    let enterFavSelect = currentState?.enterFavSelect
+
+    // let webView = currentTab.webView
+    // console.log(webView)
 
     
     if (enterTabSelect){
@@ -56,14 +66,24 @@ const Main = () => {
                 <SafeAreaView style={[styles.container, { position: safeAreaPosition }]} />
             </>
         )
-    } else{
+    } else if (enterFavSelect){
+        return (
+            <>
+                <SafeAreaView style={{ backgroundColor: 'rgba(0,0,0,0.7)' }} />
+
+                <FavoriteView/>
+                <SafeAreaView style={[styles.container, { position: safeAreaPosition }]} />
+            </>
+        )
+    } else {
         return (
             <>
                 <SafeAreaView style={{ backgroundColor: 'rgba(0,0,0,0.7)' }} />
     
                 <MenuProvider>
                     <View style={{ flex: 1 }}>
-                        <Browser initInfo={currentTab}/>
+                    <Browser initInfo={currentTab}/>
+                        {/* <Browser initInfo={currentTab} webView={webView}/> */}
                     </View>
                 </MenuProvider>
     

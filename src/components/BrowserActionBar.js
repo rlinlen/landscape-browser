@@ -10,7 +10,7 @@ import { Context as TabContext} from '../context/tabContext';
 
 const BrowserActionBar = ({ browserRef, canGoBack, canGoForward, url }) => {
 
-    const { state: currentState, setCurrentTab , setEnterTabSelect } = useContext(CurrentContext);
+    const { state: currentState, setCurrentTab , setEnterTabSelect, setEnterFavSelect } = useContext(CurrentContext);
     const { state: tabState, addNewTab, updateTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
 
     const handleGoBack = () => {
@@ -46,6 +46,10 @@ const BrowserActionBar = ({ browserRef, canGoBack, canGoForward, url }) => {
         updateTab(updatedTab)
     }
 
+    const handleSelectFavorite = () => {
+        setEnterFavSelect(true)
+    }
+
 
     return (
         <View style={styles.browserOpsContainer}>
@@ -71,7 +75,7 @@ const BrowserActionBar = ({ browserRef, canGoBack, canGoForward, url }) => {
             </TouchableOpacity>
             <TouchableOpacity
             // style={styles.changeOrientationButton}
-            // onPress={()=>handleGoForward()}
+                onPress={()=>handleSelectFavorite()}
             >
                 <AntDesign name="book" size={24} color="white" />
             </TouchableOpacity>

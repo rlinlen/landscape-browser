@@ -8,7 +8,9 @@ const currentReducer = (state, action) => {
         case 'set_hide_safe_area_buttom':
             return  {...state, hideSafeAreaButtom: action.payload};
         case 'set_enter_tab_select':
-            return {...state, enterTabSelect: action.payload}
+            return {...state, enterTabSelect: action.payload};
+            case 'set_enter_fav_select':
+            return {...state, enterFavSelect: action.payload};
         default:
             return state;
     }
@@ -17,6 +19,12 @@ const currentReducer = (state, action) => {
 const setEnterTabSelect = dispatch => {
   return (enterTabSelect) => {
     dispatch({ type: 'set_enter_tab_select', payload: enterTabSelect });
+  }
+}
+
+const setEnterFavSelect = dispatch => {
+  return (enterFavSelect) => {
+    dispatch({ type: 'set_enter_fav_select', payload: enterFavSelect });
   }
 }
 
@@ -34,7 +42,7 @@ const setHideSafeAreaButtom = dispatch => {
 
 export const { Context, Provider } = createDataContext(
     currentReducer,
-    { setCurrentTab , setEnterTabSelect, setHideSafeAreaButtom },
+    { setCurrentTab , setEnterFavSelect, setEnterTabSelect, setHideSafeAreaButtom },
     {
         currentTab: {
           // url: defaultUrl
