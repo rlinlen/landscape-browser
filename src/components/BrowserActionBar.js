@@ -4,6 +4,7 @@ import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Linking from "expo-linking";
 import { captureRef } from 'react-native-view-shot';
 
+import {browserActionBarHeight} from '../util/appConstant';
 import { Context as CurrentContext} from '../context/currentContext';
 import { Context as TabContext} from '../context/tabContext';
 
@@ -88,14 +89,14 @@ const BrowserActionBar = ({ browserRef, canGoBack, canGoForward, url }) => {
 const styles = StyleSheet.create({
     browserOpsContainer: {
         // flex:1,
-        height: 40,
+        height: browserActionBarHeight,
         // position:'absolute',
         // bottom:0,
         backgroundColor: 'rgba(76,76,76,1)',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: '3%',
+        paddingHorizontal: '5%',
         // zIndex:1
     },
 });

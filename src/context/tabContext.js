@@ -1,13 +1,14 @@
 import { v4 as uuid } from 'uuid';
 
 import createDataContext from './createDataContext';
+import { defaultUrl } from '../util/appConstant';
 
 const tabReducer = (state, action) => {
     switch (action.type) {
         case 'add_tab':
             return [...state, {
-                url: `https://www.google.com/`,
-                title: 'title A',
+                url: defaultUrl,
+                title: "",
                 id: uuid()
             }];
         case 'update_tab':

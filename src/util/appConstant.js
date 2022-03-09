@@ -6,7 +6,8 @@ export const searchEngines = {
     'bing': (uri) => `https://www.bing.com/search?q=${uri}`
 };
 
-export const defaultSearchEngine = 'google';
-export const defaultUrl = 'https://www.google.com'
+export const defaultSearchEngine = 'duckduckgo';
+export const defaultUrl = 'https://duckduckgo.com/'
 
-export const addressBarHeight = 40
+export const addressBarHeight = 50
+export const browserActionBarHeight = 48

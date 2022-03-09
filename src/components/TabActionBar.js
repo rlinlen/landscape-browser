@@ -78,6 +78,8 @@ const styles = StyleSheet.create({
         // flexBasis: 10,
         // width: '90%',
         color: 'rgb(83,194,226)',
+        paddingHorizontal: 10,
+        fontSize: 16
         // backgroundColor: 'red'
     },
     barIcon: {

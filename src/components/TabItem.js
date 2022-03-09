@@ -19,7 +19,7 @@ const TabItem = ({item, handleTabPressOut, handleTabClose}) => {
     return (
         <View style={styles.container}>
             <Pressable
-                onPressOut={(e)=>handleTabPressOut(item)}
+                onPress={(e)=>handleTabPressOut(item)}
             >
                 <Image 
                     style={styles.image}
@@ -30,7 +30,7 @@ const TabItem = ({item, handleTabPressOut, handleTabClose}) => {
                 />
             </Pressable>
             <Pressable
-                onPressOut={e=>handleTabClose(item)}
+                onPress={e=>handleTabClose(item)}
                 style={styles.closeIcon}
             >
                 <AntDesign name="closecircle" size={20} color="black" />

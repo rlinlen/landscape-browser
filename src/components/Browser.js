@@ -15,6 +15,7 @@ import { defaultUrl, searchEngines, defaultSearchEngine, addressBarHeight } from
 import BrowserActionBar from './BrowserActionBar';
 import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext } from '../context/tabContext';
+import BrowserAddressBar from './BrowserAddressBar';
 
 
 
@@ -28,12 +29,13 @@ const Browser = ({ initInfo }) => {
 
   const [forceReload, setForceReload] = useState(false);
   const [navState, setNavState] = useState({});
-  const [inputUrl, setInputUrl] = useState('');
+  // const [inputUrl, setInputUrl] = useState('');
   const [newUrl, setNewUrl] = useState('');
   const [incognito, setIncognito] = useState(true);
   const [contentMode, setContentMode] = useState('recommended');
   const [scrollInitPos, setScrollInitPos] = useState(0);
   const [showBar, setShowBar] = useState(true);
+
   // const [isScrollUp, setIsScrollUp] = useState(false);
   // const [currentUrl, setCurrentUrl] = useState('');
 
@@ -99,7 +101,7 @@ const Browser = ({ initInfo }) => {
     setNavState({ canGoForward, canGoBack, title, url, loading });
     // console.log(navState)
 
-    setInputUrl(url);
+    // setInputUrl(url);
 
 
     let updatedTab = {...initInfo, url, title}
@@ -114,9 +116,10 @@ const Browser = ({ initInfo }) => {
     setHideSafeAreaButtom(!isShowBottomBar)
 
   }
-  const handleUrlSubmit = () => {
+  const handleUrlSubmit = ({nativeEvent}) => {
 
-    const newURL = upgradeURL(inputUrl, defaultSearchEngine);
+    // console.log(nativeEvent.text)
+    const newURL = upgradeURL(nativeEvent.text, defaultSearchEngine);
     // Keyboard.dismiss();
 
     setNewUrl(newURL);
@@ -239,7 +242,7 @@ const Browser = ({ initInfo }) => {
   return (
     <View style={{ flex: 1 }}>
       {showBar && <View style={[styles.browserTitleContainer, { height: addressBarHeight }]}>
-        <View style={{ paddingHorizontal: 10 }}>
+        <View style={{ paddingHorizontal: 14 }}>
           <Menu
             renderer={renderers.Popover}
             rendererProps={{ placement: 'bottom' }}
@@ -247,7 +250,7 @@ const Browser = ({ initInfo }) => {
           >
             <MenuTrigger>
               {/* <AntDesign name="setting" size={28} color="white" /> */}
-              <MaterialCommunityIcons name="account-settings-outline" size={24} color="white" />
+              <MaterialCommunityIcons name="account-settings-outline" style={styles.addressBarIcon} color="white" />
             </MenuTrigger>
             <MenuOptions customStyles={optionsStyles}>
               {/* <MenuOption onSelect={() => handleTextIncrease()}>
@@ -283,23 +286,19 @@ const Browser = ({ initInfo }) => {
           </Menu>
         </View>
         <View style={{ flexGrow: 1, flexShrink: 1 }}>
-          <TextInput
-            style={styles.browserAddressBar}
+          <BrowserAddressBar
             defaultValue={navState.url}
-            autoCapitalize='none'
-            autoCorrect={false}
-            onChangeText={setInputUrl}
-            value={inputUrl}
-            selectTextOnFocus={true}
+            // onChangeText={setInputUrl}
+            // value={inputUrl}
             onSubmitEditing={handleUrlSubmit}
           />
-        </View>
-        <View style={{ paddingHorizontal: 10 }}>
+          </View>
+        <View style={{ paddingHorizontal: 14 }}>
           <TouchableOpacity
             // style={styles.changeOrientationButton}
             onPress={() => handleReload()}
           >
-            <MaterialCommunityIcons name="reload" size={22} color="white" />
+            <MaterialCommunityIcons name="reload" size={24} color="white" />
           </TouchableOpacity>
         </View>
         {/* <Text style={styles.browserTitle}>
@@ -363,17 +362,10 @@ const styles = StyleSheet.create({
     // backgroundColor: 'red'
     // color: 'white'
   },
-  browserAddressBar: {
-    // height: 40,
-    backgroundColor: 'black',
-    color: 'white',
-    borderRadius: 6,
-    // flex: 1,
-    borderWidth: 0,
-    paddingRight: 8,
-    paddingLeft: 8,
-    paddingVertical: 4
-  },
+  addressBarIcon:{
+    // size:24
+    fontSize:30
+  }, 
   changeOrientationButton: {
     alignItems: "center",
     backgroundColor: "#DDDDDD",

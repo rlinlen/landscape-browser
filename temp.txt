@@ -1,6 +1,6 @@
 TODO:
 
-- add clean address bar
+
 
 - Add tab support
 -- prevent tab reload when switching 
@@ -10,6 +10,11 @@ TODO:
 - Add favorite
 
 - Add asyncstorage
+
+- landscape optimize
+-- safeare
+-- tab width and colnum
+
 
 
 stage 2:
@@ -26,3 +31,6 @@ Done:
 - add swipe show/hide
 
 -- replace captureref
+- add clean address bar
+- textinput not showing keyboard
+- cancel item margin overlap
