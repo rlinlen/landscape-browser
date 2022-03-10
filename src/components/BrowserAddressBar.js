@@ -1,9 +1,9 @@
 import React, {useState, useRef} from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Pressable } from 'react-native';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import ProgressBar from './ProgressBar';
 
-
-const BrowserAddressBar = ({ defaultValue, onChangeText, value, onSubmitEditing }) => {
+const BrowserAddressBar = ({ defaultValue, onChangeText, value, onSubmitEditing , loadProgress }) => {
 
     const textInput = useRef(null)
     const [showCancel, setShowCancel] = useState(false)
@@ -49,6 +49,9 @@ const BrowserAddressBar = ({ defaultValue, onChangeText, value, onSubmitEditing 
             >
                 <AntDesign name="closecircle" size={20} color="grey" />
             </Pressable>} */}
+            <View style={{width: '99%', position:'absolute', bottom: 1, alignSelf:'center'}}>
+                <ProgressBar loadProgress={loadProgress} />
+            </View>
         </View>
     )
 

@@ -5,17 +5,14 @@ TODO:
 - Add tab support
 -- prevent tab reload when switching 
 -- tab navigate to correct position
--- tab title wrap
+-- tab title wrap and add favicon
 -- tab snapshot round
-
-- Add favorite
-- Add asyncstorag
 
 - landscape optimize
 -- safeare
 -- tab width and colnum
 
-- Add loading animate
+
 
 stage 2:
 - Add reader mode
@@ -34,3 +31,6 @@ Done:
 - add clean address bar
 - textinput not showing keyboard
 - cancel item margin overlap
+- Add favorite
+- Add asyncstorag
+- Add loading animate

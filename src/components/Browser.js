@@ -17,8 +17,8 @@ import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext } from '../context/tabContext';
 import { Context as FavoriteContext } from '../context/favoriteContext';
 import BrowserAddressBar from './BrowserAddressBar';
-import {blobToDataURLPromise} from '../util/misc';
-
+import { blobToDataURLPromise } from '../util/misc';
+import ProgressBar from './ProgressBar';
 
 
 const Browser = ({ initInfo }) => {
@@ -39,6 +39,7 @@ const Browser = ({ initInfo }) => {
   const [contentMode, setContentMode] = useState('recommended');
   const [scrollInitPos, setScrollInitPos] = useState(0);
   const [showBar, setShowBar] = useState(true);
+  const [loadProgress, setLoadProgress] = useState(0);
 
   // const [isScrollUp, setIsScrollUp] = useState(false);
   // const [currentUrl, setCurrentUrl] = useState('');
@@ -247,6 +248,12 @@ const Browser = ({ initInfo }) => {
       icon: icon
     })
   }
+  const handleLoadProgress = ({ nativeEvent }) => {
+    let loadingProgress = nativeEvent.progress;
+    // console.log(loadingProgress)
+    // 0 -> 1
+    setLoadProgress(loadingProgress)
+  }
 
   const optionsStyles = {
     optionsContainer: {
@@ -331,6 +338,7 @@ const Browser = ({ initInfo }) => {
             // onChangeText={setInputUrl}
             // value={inputUrl}
             onSubmitEditing={handleUrlSubmit}
+            loadProgress={loadProgress}
           />
         </View>
         <View style={{ paddingHorizontal: 14 }}>
@@ -341,9 +349,8 @@ const Browser = ({ initInfo }) => {
             <MaterialCommunityIcons name="reload" size={24} color="white" />
           </TouchableOpacity>
         </View>
-        {/* <Text style={styles.browserTitle}>
-          </Text> */}
       </View>}
+
       <View style={{ flex: 1 }}>
         <Pressable style={{ flex: 1 }} onPressIn={handlePressIn} onPressOut={handlePressOut}>
           {/* {webView} */}
@@ -361,6 +368,7 @@ const Browser = ({ initInfo }) => {
             onScroll={handleScroll}
             forceDarkOn={true}
             allowsBackForwardNavigationGestures={true}
+            onLoadProgress={handleLoadProgress}
             key={forceReload}
             ref={browserRef}
           />

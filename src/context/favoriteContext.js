@@ -6,7 +6,7 @@ import { storeData, getStoreData } from '../util/misc';
 
 const favoriteReducer = (state, action) => {
     switch (action.type) {
-        case 'add_fav':
+        case 'add_fav':{
             const newFav = [...state, {
                 id: uuid(),
                 url: action.payload.url,
@@ -16,7 +16,8 @@ const favoriteReducer = (state, action) => {
             }]
             storeData('favorite',newFav)
             return newFav;
-        case 'get_all_favs':
+        }
+        case 'get_all_favs':{
             // newFav = [{
             //     id: uuid(),
             //     url: 'https://google.com/',
@@ -35,14 +36,17 @@ const favoriteReducer = (state, action) => {
             //     title: 'Google'
             // }]
             return action.payload
-        case 'delete_one_fav':
-            newFav = state.filter(tab => tab.id != action.payload.id)
+        }
+        case 'delete_one_fav':{
+            const newFav = state.filter(tab => tab.id != action.payload.id)
             storeData('favorite',newFav)
             return newFav
-        case 'delete_all_favs':
-            newFav = [];
+        }
+        case 'delete_all_favs':{
+            const newFav = [];
             storeData('favorite',newFav)
             return newFav
+        }
         default:
             return state;
     }
