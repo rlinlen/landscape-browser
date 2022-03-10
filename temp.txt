@@ -15,7 +15,7 @@ TODO:
 -- safeare
 -- tab width and colnum
 
-
+- Add loading animate
 
 stage 2:
 - Add reader mode

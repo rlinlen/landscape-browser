@@ -17,6 +17,7 @@ import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext } from '../context/tabContext';
 import { Context as FavoriteContext } from '../context/favoriteContext';
 import BrowserAddressBar from './BrowserAddressBar';
+import {blobToDataURLPromise} from '../util/misc';
 
 
 
@@ -27,7 +28,7 @@ const Browser = ({ initInfo }) => {
   const { setHideSafeAreaButtom } = useContext(CurrentContext);
   const { state: tabState, addNewTab, updateTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
   const { addNewFav } = useContext(FavoriteContext);
-  
+
 
 
   const [forceReload, setForceReload] = useState(false);
@@ -107,7 +108,7 @@ const Browser = ({ initInfo }) => {
     // setInputUrl(url);
 
 
-    let updatedTab = {...initInfo, url, title}
+    let updatedTab = { ...initInfo, url, title }
     updateTab(updatedTab)
 
     showBottomBar(true);
@@ -119,7 +120,7 @@ const Browser = ({ initInfo }) => {
     setHideSafeAreaButtom(!isShowBottomBar)
 
   }
-  const handleUrlSubmit = ({nativeEvent}) => {
+  const handleUrlSubmit = ({ nativeEvent }) => {
 
     // console.log(nativeEvent.text)
     const newURL = upgradeURL(nativeEvent.text, defaultSearchEngine);
@@ -216,10 +217,34 @@ const Browser = ({ initInfo }) => {
       console.log(error)
     }
   }
-  const handleAddFavorite = () => {
+  const handleAddFavorite = async () => {
+
+    const getIcon = async (url) => {
+      try {
+        // https://stackoverflow.com/questions/10282939/how-to-get-favicons-url-from-a-generic-webpage-in-javascript
+        // let defaultIconUrl= 'https://s2.googleusercontent.com/s2/favicons?domain_url='
+        let defaultIconUrl = '/favicon.ico'
+        let newUrl = url.endsWith('/') ? url.slice(0, -1) : url
+        // const response = await fetch(`${defaultIconUrl}${url}`)
+        let faviconUrl = `${newUrl}${defaultIconUrl}`
+        const response = await fetch(faviconUrl)
+        const imageBlob = await response.blob();
+        // const imageObjectURL = URL.createObjectURL(imageBlob);
+        // console.log(imageObjectURL)
+
+        const imageDataUrl = await blobToDataURLPromise(imageBlob);
+        // console.log(imageDataUrl)
+        return imageDataUrl
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    let icon = await getIcon(navState.url)
     addNewFav({
       url: navState.url,
-      title: navState.title
+      title: navState.title,
+      icon: icon
     })
   }
 
@@ -307,7 +332,7 @@ const Browser = ({ initInfo }) => {
             // value={inputUrl}
             onSubmitEditing={handleUrlSubmit}
           />
-          </View>
+        </View>
         <View style={{ paddingHorizontal: 14 }}>
           <TouchableOpacity
             // style={styles.changeOrientationButton}
@@ -378,10 +403,10 @@ const styles = StyleSheet.create({
     // backgroundColor: 'red'
     // color: 'white'
   },
-  addressBarIcon:{
+  addressBarIcon: {
     // size:24
-    fontSize:30
-  }, 
+    fontSize: 30
+  },
   changeOrientationButton: {
     alignItems: "center",
     backgroundColor: "#DDDDDD",

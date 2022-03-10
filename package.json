@@ -22,7 +22,8 @@
     "react-native-share-menu": "^5.0.5",
     "react-native-web": "0.17.1",
     "react-native-webview": "^11.17.2",
-    "react-native-view-shot": "3.1.2"
+    "react-native-view-shot": "3.1.2",
+    "@react-native-async-storage/async-storage": "~1.15.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
