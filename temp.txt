@@ -12,7 +12,7 @@ TODO:
 -- safeare
 -- tab width and colnum
 
-
+about blank error when go to fav
 
 stage 2:
 - Add reader mode

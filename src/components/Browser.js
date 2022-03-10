@@ -220,32 +220,31 @@ const Browser = ({ initInfo }) => {
   }
   const handleAddFavorite = async () => {
 
-    const getIcon = async (url) => {
-      try {
-        // https://stackoverflow.com/questions/10282939/how-to-get-favicons-url-from-a-generic-webpage-in-javascript
-        // let defaultIconUrl= 'https://s2.googleusercontent.com/s2/favicons?domain_url='
-        let defaultIconUrl = '/favicon.ico'
-        let newUrl = url.endsWith('/') ? url.slice(0, -1) : url
-        // const response = await fetch(`${defaultIconUrl}${url}`)
-        let faviconUrl = `${newUrl}${defaultIconUrl}`
-        const response = await fetch(faviconUrl)
-        const imageBlob = await response.blob();
-        // const imageObjectURL = URL.createObjectURL(imageBlob);
-        // console.log(imageObjectURL)
+    // const getIcon = async (url) => {
+    //   try {
+    //     // https://stackoverflow.com/questions/10282939/how-to-get-favicons-url-from-a-generic-webpage-in-javascript
+    //     // let defaultIconUrl= 'https://s2.googleusercontent.com/s2/favicons?domain_url='
+    //     let defaultIconUrl = '/favicon.ico'
+    //     let newUrl = url.endsWith('/') ? url.slice(0, -1) : url
+    //     // const response = await fetch(`${defaultIconUrl}${url}`)
+    //     let faviconUrl = `${newUrl}${defaultIconUrl}`
+    //     const response = await fetch(faviconUrl)
+    //     const imageBlob = await response.blob();
+    //     // const imageObjectURL = URL.createObjectURL(imageBlob);
+    //     // console.log(imageObjectURL)
 
-        const imageDataUrl = await blobToDataURLPromise(imageBlob);
-        // console.log(imageDataUrl)
-        return imageDataUrl
-      } catch (error) {
-        console.log(error)
-      }
-    }
+    //     const imageDataUrl = await blobToDataURLPromise(imageBlob);
+    //     // console.log(imageDataUrl)
+    //     return imageDataUrl
+    //   } catch (error) {
+    //     console.log(error)
+    //   }
+    // }
 
-    let icon = await getIcon(navState.url)
+    // let icon = await getIcon(navState.url)
     addNewFav({
       url: navState.url,
-      title: navState.title,
-      icon: icon
+      title: navState.title
     })
   }
   const handleLoadProgress = ({ nativeEvent }) => {

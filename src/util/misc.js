@@ -35,3 +35,41 @@ export const blobToDataURLPromise = (blob) => {
         resolve(data);
       })});
   };
+
+
+//getIcon
+export const getIcon = async (url) => {
+  try {
+    // https://stackoverflow.com/questions/10282939/how-to-get-favicons-url-from-a-generic-webpage-in-javascript
+    // let defaultIconUrl= 'https://s2.googleusercontent.com/s2/favicons?domain_url='
+    let defaultIconUrl = '/favicon.ico'
+    let newUrl = url.endsWith('/') ? url.slice(0, -1) : url
+    // const response = await fetch(`${defaultIconUrl}${url}`)
+
+    if (url.startsWith('https')){
+      let faviconUrl = `${newUrl}${defaultIconUrl}`
+      const response = await fetch(faviconUrl)
+      const imageBlob = await response.blob();
+      // const imageObjectURL = URL.createObjectURL(imageBlob);
+      // console.log(imageObjectURL)
+  
+      const imageDataUrl = await blobToDataURLPromise(imageBlob);
+      // console.log(imageDataUrl)
+      return imageDataUrl
+    }else{
+      return ""
+    }
+
+   
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
+
+
+
+export const isEmpty = (obj) => {
+  return Object.keys(obj).length === 0;
+}

@@ -9,6 +9,8 @@ import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext} from '../context/tabContext';
 import { Context as FavoriteContext } from '../context/favoriteContext';
 
+import {isEmpty} from '../util/appConstant'
+
 const usePrevious = (value) => {
     const ref = useRef();
     useEffect(() => {
@@ -17,9 +19,7 @@ const usePrevious = (value) => {
     return ref.current;
 }
 
-const isEmpty = (obj) => {
-    return Object.keys(obj).length === 0;
-}
+
 
 const Main = () => {
 
