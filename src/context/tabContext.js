@@ -10,6 +10,7 @@ const tabReducer = (state, action) => {
         case 'add_tab':
             return [...state, action.payload];
         case 'update_tab':
+            // console.log(action.payload)
             let objIndex = state.findIndex((obj => obj.id == action.payload.id));
             let updatedTab = Object.assign({}, state[objIndex])
             Object.assign(updatedTab, action.payload)
@@ -46,14 +47,11 @@ const addNewTab = dispatch => {
 const updateTab = dispatch => {
     return async (tabUpdateInfo) => {
             let icon = ''
-            console.log(tabUpdateInfo?.url)
+            // console.log(tabUpdateInfo?.url)
             if (tabUpdateInfo?.url?.startsWith('http')) {
                 icon = await getIcon(tabUpdateInfo.url)
-            } else {
-                icon = defaultIcon
-            }
-            // let icon = await getIcon()
-            if (tabUpdateInfo.url) tabUpdateInfo['icon'] = icon
+                tabUpdateInfo['icon'] = icon
+            } 
             dispatch({ type: 'update_tab', payload: tabUpdateInfo })
 
     }

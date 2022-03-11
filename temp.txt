@@ -6,11 +6,12 @@ TODO:
 -- prevent tab reload when switching 
 -- tab navigate to correct position
 -- tab title wrap and add favicon
--- tab snapshot round
 
-- landscape optimize
--- safeare
--- tab width and colnum
+
+-- search and tabview did not store tab state
+
+
+
 
 about blank error when go to fav
 
@@ -34,3 +35,7 @@ Done:
 - Add favorite
 - Add asyncstorag
 - Add loading animate
+-- tab snapshot round
+- click address bar show fav
+-- tab width and colnum in landscape
+-- landscape safeare

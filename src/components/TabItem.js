@@ -15,7 +15,7 @@ const ITEM_MARGIN = ITEM_OFFSET * 2;
 const ITEM_HEIGHT = (SCREEN_WIDTH - ITEM_MARGIN) / numColumns;
 
 const TabItem = ({ item, handleTabPressOut, handleTabClose }) => {
-    console.log(item.icon)
+    // console.log(item.icon)
     return (
         <View style={styles.container}>
             <Pressable
@@ -48,7 +48,8 @@ const TabItem = ({ item, handleTabPressOut, handleTabClose }) => {
                         uri: item.icon
                     }}
                 />
-                <Text style={styles.title}>{item.title ? item.title : item.url}</Text>
+                {/* <Text style={styles.title}>{item.title ? item.title : item.url}</Text> */}
+                <Text style={styles.title}>{item.title}</Text>
             </View>
         </View>
     )
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
         // width: '50%',
         // flex:1,
         height: '100%',
-
+        borderRadius: 20
     },
     title: {
         color: 'white',

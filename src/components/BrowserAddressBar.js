@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Pressable } from '
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import ProgressBar from './ProgressBar';
 
-const BrowserAddressBar = ({ defaultValue, onChangeText, value, onSubmitEditing , loadProgress }) => {
+const BrowserAddressBar = ({ defaultValue, onFocus = () => {}, onBlur = () => {},onSubmitEditing , loadProgress }) => {
 
     const textInput = useRef(null)
     const [showCancel, setShowCancel] = useState(false)
@@ -12,12 +12,12 @@ const BrowserAddressBar = ({ defaultValue, onChangeText, value, onSubmitEditing 
     const handleInputCancel = () => {
         // textInput.clear()
     }
-    const handleFocus = ({nativeEvent}) => {
-        // setCacheText(nativeEvent.text)
-        // console.log('focus!')
-        // console.log(nativeEvent.text)
-        setShowCancel(true)
-    }
+    // const handleFocus = ({nativeEvent}) => {
+    //     // setCacheText(nativeEvent.text)
+    //     // console.log('focus!')
+    //     // console.log(nativeEvent.text)
+    //     setShowCancel(true)
+    // }
     const handleBlur = () => {
         //restore original value
         // console.log('blur!')
@@ -34,8 +34,8 @@ const BrowserAddressBar = ({ defaultValue, onChangeText, value, onSubmitEditing 
                 autoCorrect={false}
                 // onChangeText={onChangeText}
                 // value={value}
-                // onFocus={handleFocus}
-                // onBlur={handleBlur}
+                onFocus={onFocus}
+                onBlur={onBlur}
                 selectTextOnFocus={true}
                 enablesReturnKeyAutomatically={true}
                 textContentType='URL'

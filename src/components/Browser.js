@@ -19,27 +19,32 @@ import { Context as FavoriteContext } from '../context/favoriteContext';
 import BrowserAddressBar from './BrowserAddressBar';
 import { blobToDataURLPromise } from '../util/misc';
 import ProgressBar from './ProgressBar';
+import FavoriteView from './FavoriteView';
 
 
 const Browser = ({ initInfo }) => {
 
   const browserRef = useRef(null);
 
-  const { setHideSafeAreaButtom } = useContext(CurrentContext);
+  const { state: currentState, setHideSafeAreaButtom, setEnterFavSelect } = useContext(CurrentContext);
   const { state: tabState, addNewTab, updateTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
   const { addNewFav } = useContext(FavoriteContext);
 
+  const enterFavSelect = currentState?.enterFavSelect
+  const currentOrientation = currentState?.currentOrientation
 
 
   const [forceReload, setForceReload] = useState(false);
   const [navState, setNavState] = useState({});
   // const [inputUrl, setInputUrl] = useState('');
-  const [newUrl, setNewUrl] = useState('');
+  const [newUrl, setNewUrl] = useState(initInfo.url);
   const [incognito, setIncognito] = useState(true);
   const [contentMode, setContentMode] = useState('recommended');
   const [scrollInitPos, setScrollInitPos] = useState(0);
-  const [showBar, setShowBar] = useState(true);
+  const [showAddressBar, setShowAddressBar] = useState(true);
+  const [showBottomBar, setShowBottomBar] = useState(true);
   const [loadProgress, setLoadProgress] = useState(0);
+  
 
   // const [isScrollUp, setIsScrollUp] = useState(false);
   // const [currentUrl, setCurrentUrl] = useState('');
@@ -49,9 +54,26 @@ const Browser = ({ initInfo }) => {
   //   setNewUrl(event.url);
   // }
 
+  // useEffect(() => {
+  //   console.log('browser load new init')
+  //   console.log(initInfo.url)
+  //   // // setNewUrl(initInfo.url)
+  //   console.log(`new url:${newUrl}`)
+  //   console.log(`nav url:${navState.url}`)
+  //   // setForceReload(!forceReload)
+  // })
+
   useEffect(() => {
-    // console.log(initInfo)
-  })
+    // console.log(`update initInfo:${initInfo.url}`)
+    setNewUrl(initInfo.url);
+  }, [initInfo])
+
+  // useEffect(() => {
+  //   if (newUrl &&  newUrl != ""){
+
+  //     // setForceReload(!forceReload)
+  //   }
+  // },[newUrl])
   // useEffect(() => {
   //   Linking.addEventListener("url", handleDeepLink);
   //   return () => {
@@ -61,6 +83,7 @@ const Browser = ({ initInfo }) => {
   // useEffect(() => {
   //   setNewUrl()
   // });
+
 
 
   async function changeScreenOrientation() {
@@ -81,12 +104,12 @@ const Browser = ({ initInfo }) => {
     // console.log(currentOritentation)
 
     let direction = ScreenOrientation.OrientationLock.DEFAULT
-    currentDirectionPos = transformMatrix.indexOf(currentOritentation)
+    let currentDirectionPos = transformMatrix.indexOf(currentOritentation)
     if (defaultOrientation.includes(currentOritentation)) {
-      nextDirectionPos = 0
+      let nextDirectionPos = 0
       direction = transformMatrix[nextDirectionPos]
     } else if (currentDirectionPos != -1) {
-      nextDirectionPos = currentDirectionPos + 1
+      let nextDirectionPos = currentDirectionPos + 1
       direction = transformMatrix[nextDirectionPos]
     }
 
@@ -107,19 +130,29 @@ const Browser = ({ initInfo }) => {
     // console.log(navState)
 
     // setInputUrl(url);
+    setNewUrl(url);
 
 
     let updatedTab = { ...initInfo, url, title }
     updateTab(updatedTab)
 
-    showBottomBar(true);
+    setShowAddressBar(true);
+    showBottomBarAndSafeArea(true);
   };
 
-  const showBottomBar = (isShowBottomBar) => {
+  const showBottomBarAndSafeArea = (isShowBottomBar) => {
 
-    setShowBar(isShowBottomBar);
+    // setShowBar(isShowBottomBar);
+    setShowBottomBar(isShowBottomBar);
     setHideSafeAreaButtom(!isShowBottomBar)
 
+  }
+  const handleAddressBarFocus = (setEnterFavSelect) => {
+    setEnterFavSelect(true)
+    setShowBottomBar(false)
+  }
+  const handleAddressBarBlur = (setEnterFavSelect) => {
+    setEnterFavSelect(false)
   }
   const handleUrlSubmit = ({ nativeEvent }) => {
 
@@ -128,6 +161,8 @@ const Browser = ({ initInfo }) => {
     // Keyboard.dismiss();
 
     setNewUrl(newURL);
+    // let updatedTab = { url: newURL }
+    // updateTab(updatedTab)
   }
 
   const upgradeURL = (uri, searchEngine = 'google') => {
@@ -148,6 +183,15 @@ const Browser = ({ initInfo }) => {
     if (browserRef) {
       browserRef.current.reload();
     }
+    // setNewUrl('https://yahoo.com')
+  }
+  const handleWebViewLoad = ({ nativeEvent }) => {
+    // console.log('hellow')
+    const { canGoForward, canGoBack, title, url, loading } = nativeEvent;
+
+    console.log(url)
+    let updatedTab = { ...initInfo, url, title }
+    // updateTab(updatedTab)
   }
 
   const handleChangeIncognito = () => {
@@ -208,10 +252,13 @@ const Browser = ({ initInfo }) => {
         if (scrollFinPos - scrollInitPos > addressBarHeight) {
           //scroll up
           // setIsScrollUp(true)
-          showBottomBar(true)
+          setShowAddressBar(true)
+          showBottomBarAndSafeArea(true)
         } else {
           // setIsScrollUp(false)
-          showBottomBar(false)
+          // console.log('set show bar to false')
+          setShowAddressBar(false)
+          showBottomBarAndSafeArea(false)
         }
       }
     } catch (error) {
@@ -258,7 +305,7 @@ const Browser = ({ initInfo }) => {
     optionsContainer: {
       backgroundColor: 'rgb(40,40,40)',
       borderRadius: 10,
-      width: '100%'
+      width: '65%'
       // padding: 5,
     },
     optionsWrapper: {
@@ -279,13 +326,49 @@ const Browser = ({ initInfo }) => {
     },
   };
 
+  const MainFrame = ({ source, onNavigationStateChange, incognito, contentMode, onScroll, onLoadProgress,
+    innerKey, innerRef }) => {
+    // if (enterFavSelect) {
+    //   setShowBottomBar(false)
+    //   return (
+    //     <FavoriteView/>
+    //   )
+    // } else {
+    return (
+      <Pressable style={{ flex: 1 }} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+        {/* {webView} */}
+        <WebView
+
+          contentInset={{ top: addressBarHeight }}
+          // automaticallyAdjustContentInsets={false}
+          contentInsetAdjustmentBehavior='scrollableAxes'
+          // source={{ uri: newUrl ? newUrl : defaultUrl }}
+          source={source}
+          style={{ flex: 1 }}
+          // onNavigationStateChange={onNavigationStateChange}
+          // incognito={incognito}
+          // contentMode={contentMode}
+          allowsInlineMediaPlayback={true}
+          // onScroll={onScroll}
+          forceDarkOn={true}
+          allowsBackForwardNavigationGestures={true}
+        // onLoadProgress={onLoadProgress}
+        // key={innerKey}
+        // ref={innerRef}
+        />
+      </Pressable>
+    )
+    // }
+
+  }
+
   return (
     <View style={{ flex: 1 }}>
-      {showBar && <View style={[styles.browserTitleContainer, { height: addressBarHeight }]}>
+      {showAddressBar && <View style={[styles.browserTitleContainer, { height: addressBarHeight }]}>
         <View style={{ paddingHorizontal: 14 }}>
           <Menu
-            renderer={renderers.Popover}
-            rendererProps={{ placement: 'bottom' }}
+          // renderer={renderers.Popover}
+          // rendererProps={{ placement: 'bottom' }}
           // anchorStyle={{backgroundColor:'black'}}
           >
             <MenuTrigger>
@@ -336,6 +419,8 @@ const Browser = ({ initInfo }) => {
             defaultValue={navState.url}
             // onChangeText={setInputUrl}
             // value={inputUrl}
+            onFocus={() => handleAddressBarFocus(setEnterFavSelect)}
+            onBlur={() => handleAddressBarBlur(setEnterFavSelect)}
             onSubmitEditing={handleUrlSubmit}
             loadProgress={loadProgress}
           />
@@ -351,15 +436,28 @@ const Browser = ({ initInfo }) => {
       </View>}
 
       <View style={{ flex: 1 }}>
-        <Pressable style={{ flex: 1 }} onPressIn={handlePressIn} onPressOut={handlePressOut}>
-          {/* {webView} */}
+        {/* <MainFrame 
+          source={{ uri: newUrl ? newUrl : initInfo.url }}
+          onNavigationStateChange={onNavigationStateChange}
+          incognito={incognito}
+          contentMode={contentMode}
+          onScroll={handleScroll}
+          onLoadProgress={handleLoadProgress}
+          innerKey={forceReload}
+          innerRef={browserRef}
+        /> */}
+        <Pressable style={[{ flex: 1 },
+          enterFavSelect ? { display: 'none' } : {},
+          currentOrientation ? {width:'90%', alignSelf:'center'} : {}
+        ]} onPressIn={handlePressIn} onPressOut={handlePressOut}>
           <WebView
+            // onLoadStart={handleWebViewLoad}
             contentInset={{ top: addressBarHeight }}
             // automaticallyAdjustContentInsets={false}
             contentInsetAdjustmentBehavior='scrollableAxes'
-            // source={{ uri: newUrl ? newUrl : defaultUrl }}
-            source={{ uri: newUrl ? newUrl : initInfo.url }}
-            style={{ flex: 1 }}
+            // source={{ uri: newUrl }}
+            source={{ uri: newUrl }}
+            style={[{ flex: 1 }]}
             onNavigationStateChange={onNavigationStateChange}
             incognito={incognito}
             contentMode={contentMode}
@@ -372,13 +470,15 @@ const Browser = ({ initInfo }) => {
             ref={browserRef}
           />
         </Pressable>
-        {showBar &&
+        {enterFavSelect && <FavoriteView setNewUrl={setNewUrl}></FavoriteView>}
+        {showBottomBar &&
           <BrowserActionBar
             canGoForward={navState.canGoForward}
             canGoBack={navState.canGoBack}
             browserRef={browserRef}
             url={navState.url}
-          />}
+          />
+        }
       </View>
 
     </View>
@@ -388,7 +488,7 @@ const Browser = ({ initInfo }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#fff',
+    // backgroundColor:'red'
     // alignItems: 'center',
     // justifyContent: 'center',
   },

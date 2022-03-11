@@ -4,12 +4,13 @@ import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import FavoriteItem from './FavoriteItem';
 import FavoriteActionBar from './FavoriteActionBar';
+import {addressBarHeight} from '../util/appConstant';
 import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext } from '../context/tabContext';
 import { Context as FavoriteContext } from '../context/favoriteContext';
 
 
-const FavoriteView = ({ }) => {
+const FavoriteView = ({setNewUrl}) => {
 
     const { state: currentState, setCurrentTab , setEnterTabSelect, setEnterFavSelect} = useContext(CurrentContext);
     const { state: tabState, addNewTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
@@ -18,9 +19,11 @@ const FavoriteView = ({ }) => {
     
 
     const handleItemSelect = (item) => {
-        // console.log(item)
-        // setCurrentTab(item)
-        addNewTab(item.url)
+        // console.log(item.url)
+        // console.log(item.url)
+        setCurrentTab(item)
+        setNewUrl(item.url)
+        // addNewTab(item.url)
         setEnterFavSelect(false)
         setEnterTabSelect(false)
     }
@@ -32,7 +35,7 @@ const FavoriteView = ({ }) => {
     return (
         <View style={styles.container}>
             <FlatList
-                // style={styles.container}
+                style={styles.flatlistContainer}
                 // columnWrapperStyle={{flex:1}}
                 data={favState}
                 renderItem={({ item }) => (
@@ -56,7 +59,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'rgba(0,0,0,1)'
     },
-
+    flatlistContainer:{
+        // position:'relative',
+        // top:addressBarHeight,
+        paddingTop: addressBarHeight
+    }
 });
 
 

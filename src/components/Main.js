@@ -1,20 +1,21 @@
-import React, { useContext , useEffect, useRef} from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { StyleSheet, SafeAreaView, View } from 'react-native';
 import { MenuProvider } from 'react-native-popup-menu';
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 import Browser from './Browser';
 import TabView from './TabView';
 import FavoriteView from './FavoriteView'
 import { Context as CurrentContext } from '../context/currentContext';
-import { Context as TabContext} from '../context/tabContext';
+import { Context as TabContext } from '../context/tabContext';
 import { Context as FavoriteContext } from '../context/favoriteContext';
 
-import {isEmpty} from '../util/appConstant'
+import { isEmpty } from '../util/appConstant'
 
 const usePrevious = (value) => {
     const ref = useRef();
     useEffect(() => {
-      ref.current = value;
+        ref.current = value;
     });
     return ref.current;
 }
@@ -23,75 +24,115 @@ const usePrevious = (value) => {
 
 const Main = () => {
 
-    const { state: currentState, setCurrentTab } = useContext(CurrentContext);
-    const { state: tabState, addNewTab , deleteOneTab , deleteAllTabs } = useContext(TabContext);
-    const { state: favState, getAllFavs} = useContext(FavoriteContext);
+    const { state: currentState, setCurrentTab, setCurrentOrientation } = useContext(CurrentContext);
+    const { state: tabState, addNewTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
+    const { state: favState, getAllFavs } = useContext(FavoriteContext);
+
+    const [numTabColumns, setNumTabColumns] = useState(2);
 
     const prevTabState = usePrevious(tabState);
-    useEffect(()=>{
+    useEffect(() => {
         // console.log(prevTabState)
-        if (prevTabState && (tabState.length > prevTabState.length)){
+        if (prevTabState && (tabState.length > prevTabState.length)) {
             // console.log('tabState changed:')
             // console.log(tabState)
             newTab = tabState[tabState.length - 1]
             setCurrentTab(newTab)
         }
-    },[tabState])
+    }, [tabState])
 
-    useEffect(()=>{
+    useEffect(() => {
         getAllFavs()
-    },[])
+    }, [])
 
     let safeAreaPosition = currentState?.hideSafeAreaButtom ? 'absolute' : 'relative'
     let currentTab = currentState?.currentTab
+    // console.log('Main')
+    // console.log(currentTab.url)
     let enterTabSelect = currentState?.enterTabSelect
-    let enterFavSelect = currentState?.enterFavSelect
+    let currentOrientation = currentState?.currentOrientation
 
     // let webView = currentTab.webView
     // console.log(webView)
 
-    
-    if (enterTabSelect){
-        return (
-            <>
-                <SafeAreaView style={{ backgroundColor: 'rgba(0,0,0,0.7)' }} />
+    useEffect(async () => {
 
-                <TabView/>
-                {/* <BrowserActionBar
-                    canGoForward={false}
-                    canGoBack={false}
-                    browserRef={null}
-                    url={false}
-                /> */}
-                <SafeAreaView style={[styles.container, { position: safeAreaPosition }]} />
-            </>
-        )
-    } else if (enterFavSelect){
-        return (
-            <>
-                <SafeAreaView style={{ backgroundColor: 'rgba(0,0,0,0.7)' }} />
+        const subscription = ScreenOrientation.addOrientationChangeListener((evt) => {
 
-                <FavoriteView/>
-                <SafeAreaView style={[styles.container, { position: safeAreaPosition }]} />
-            </>
-        )
-    } else {
-        return (
-            <>
-                <SafeAreaView style={{ backgroundColor: 'rgba(0,0,0,0.7)' }} />
-    
+            const landscape_enums = [
+                ScreenOrientation.Orientation.LANDSCAPE_RIGHT,
+                ScreenOrientation.Orientation.LANDSCAPE_LEFT
+            ]
+
+            let currentOritentation = evt.orientationInfo.orientation
+            setCurrentOrientation(currentOritentation)
+            // console.log(currentOritentation)
+            // console.log(ScreenOrientation.Orientation.LANDSCAPE_RIGHT)
+
+            if (landscape_enums.includes(currentOritentation)) {
+                // console.log(currentOritentation)
+                setCurrentOrientation(true)
+                setNumTabColumns(4)
+            } else {
+                setCurrentOrientation(false)
+                setNumTabColumns(2)
+            }
+        });
+
+        return () => {
+            ScreenOrientation.removeOrientationChangeListener(subscription);
+        }
+
+    }, []);
+
+
+
+    // if (enterTabSelect){
+    //     return (
+    //         <>
+    //             <SafeAreaView style={{ backgroundColor: 'rgba(0,0,0,0.7)' }} />
+
+    //             <TabView numColumns={numTabColumns}/>
+    //             {/* <BrowserActionBar
+    //                 canGoForward={false}
+    //                 canGoBack={false}
+    //                 browserRef={null}
+    //                 url={false}
+    //             /> */}
+    //             <SafeAreaView style={[styles.container, { position: safeAreaPosition }]} />
+    //         </>
+    //     )
+    // } 
+    // else if (enterFavSelect){
+    //     return (
+    //         <>
+    //             <SafeAreaView style={{ backgroundColor: 'rgba(0,0,0,0.7)' }} />
+
+    //             <FavoriteView/>
+    //             <SafeAreaView style={[styles.container, { position: safeAreaPosition }]} />
+    //         </>
+    //     )
+    // } 
+    // else {
+    return (
+        <>
+            <SafeAreaView style={{ backgroundColor: 'rgba(0,0,0,0.7)' }} />
+
+
+
+            <View style={[enterTabSelect ? { display: 'none', height: 0 } : { flex: 1 }]}>
                 <MenuProvider>
-                    <View style={{ flex: 1 }}>
                     <Browser initInfo={currentTab}/>
-                        {/* <Browser initInfo={currentTab} webView={webView}/> */}
-                    </View>
                 </MenuProvider>
-    
-                <SafeAreaView style={[styles.container, { position: safeAreaPosition }]} />
-            </>
-        )
-    }
-    
+                {/* <Browser initInfo={currentTab} webView={webView}/> */}
+            </View>
+
+            {enterTabSelect && <TabView numColumns={numTabColumns} isLandscape={currentOrientation}/>}
+            <SafeAreaView style={[styles.container, { position: safeAreaPosition }]} />
+        </>
+    )
+    // }
+
 }
 
 const styles = StyleSheet.create({
