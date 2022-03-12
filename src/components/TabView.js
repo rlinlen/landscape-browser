@@ -14,8 +14,8 @@ const TabView = ({numColumns, isLandscape}) => {
     const { state: tabState, addNewTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
 
     const handleTabPressOut = (item) => {
-        // console.log(item)
-        setCurrentTab(item)
+        console.log('handleTabPressOut')
+        setCurrentTab(item.id)
         setEnterTabSelect(false)
     }
 

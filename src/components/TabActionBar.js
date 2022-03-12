@@ -9,7 +9,7 @@ import { Context as TabContext} from '../context/tabContext';
 
 const TabActionBar = ({ }) => {
 
-    const { state: currentState, setCurrentTab, setEnterTabSelect } = useContext(CurrentContext);
+    const { state: currentState, setEnterTabSelect } = useContext(CurrentContext);
     const { state: tabState, addNewTab , deleteOneTab , deleteAllTabs } = useContext(TabContext);
 
 

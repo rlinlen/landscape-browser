@@ -22,7 +22,7 @@ import ProgressBar from './ProgressBar';
 import FavoriteView from './FavoriteView';
 
 
-const Browser = ({ initInfo }) => {
+const Browser = ({ initInfo , containerStyle }) => {
 
   const browserRef = useRef(null);
 
@@ -54,17 +54,21 @@ const Browser = ({ initInfo }) => {
   //   setNewUrl(event.url);
   // }
 
-  // useEffect(() => {
-  //   console.log('browser load new init')
-  //   console.log(initInfo.url)
-  //   // // setNewUrl(initInfo.url)
-  //   console.log(`new url:${newUrl}`)
-  //   console.log(`nav url:${navState.url}`)
-  //   // setForceReload(!forceReload)
-  // })
+  useEffect(()=>{
+    console.log('browser loaded')
+  },[])
 
   useEffect(() => {
-    // console.log(`update initInfo:${initInfo.url}`)
+    // console.log('browser load new init')
+    // console.log(initInfo.url)
+    // // // setNewUrl(initInfo.url)
+    // console.log(`new url:${newUrl}`)
+    // console.log(`nav url:${navState.url}`)
+    // setForceReload(!forceReload)
+  })
+
+  useEffect(() => {
+    console.log(`update initInfo:${initInfo.url}`)
     setNewUrl(initInfo.url);
   }, [initInfo])
 
@@ -363,7 +367,7 @@ const Browser = ({ initInfo }) => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={[{ flex: 1 }, containerStyle]}>
       {showAddressBar && <View style={[styles.browserTitleContainer, { height: addressBarHeight }]}>
         <View style={{ paddingHorizontal: 14 }}>
           <Menu
@@ -455,9 +459,8 @@ const Browser = ({ initInfo }) => {
             contentInset={{ top: addressBarHeight }}
             // automaticallyAdjustContentInsets={false}
             contentInsetAdjustmentBehavior='scrollableAxes'
-            // source={{ uri: newUrl }}
             source={{ uri: newUrl }}
-            style={[{ flex: 1 }]}
+            containerStyle={[{height: 0}]}
             onNavigationStateChange={onNavigationStateChange}
             incognito={incognito}
             contentMode={contentMode}
@@ -469,6 +472,25 @@ const Browser = ({ initInfo }) => {
             key={forceReload}
             ref={browserRef}
           />
+          {/* <WebView
+            // onLoadStart={handleWebViewLoad}
+            contentInset={{ top: addressBarHeight }}
+            // automaticallyAdjustContentInsets={false}
+            contentInsetAdjustmentBehavior='scrollableAxes'
+            // source={{ uri: newUrl }}
+            source={{ uri: newUrl }}
+            style={[{ flex: 1 }]}
+            onNavigationStateChange={onNavigationStateChange}
+            incognito={incognito}
+            contentMode={contentMode}
+            allowsInlineMediaPlayback={true}
+            onScroll={handleScroll}
+            forceDarkOn={true}
+            allowsBackForwardNavigationGestures={true}
+            onLoadProgress={handleLoadProgress}
+            // key={forceReload}
+            ref={browserRef}
+          /> */}
         </Pressable>
         {enterFavSelect && <FavoriteView setNewUrl={setNewUrl}></FavoriteView>}
         {showBottomBar &&

@@ -9,7 +9,7 @@ import { Context as TabContext} from '../context/tabContext';
 
 const FavoriteActionBar = ({ }) => {
 
-    const { state: currentState, setCurrentTab, setEnterFavSelect } = useContext(CurrentContext);
+    const { state: currentState, setEnterFavSelect } = useContext(CurrentContext);
     const { state: tabState, addNewTab , deleteOneTab , deleteAllTabs } = useContext(TabContext);
 
 

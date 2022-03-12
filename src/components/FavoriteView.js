@@ -21,7 +21,7 @@ const FavoriteView = ({setNewUrl}) => {
     const handleItemSelect = (item) => {
         // console.log(item.url)
         // console.log(item.url)
-        setCurrentTab(item)
+        setCurrentTab(item.id)
         setNewUrl(item.url)
         // addNewTab(item.url)
         setEnterFavSelect(false)

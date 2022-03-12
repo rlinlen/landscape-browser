@@ -73,5 +73,9 @@ const deleteAllTabs = dispatch => {
 export const { Context, Provider } = createDataContext(
     tabReducer,
     { addNewTab, updateTab, deleteOneTab, deleteAllTabs },
-    []
+    [{
+        url: defaultUrl,
+        id: uuid(),
+        title: "",
+    }]
 );

@@ -59,9 +59,7 @@ export const { Context, Provider } = createDataContext(
     currentReducer,
     { setCurrentTab , setEnterFavSelect, setEnterTabSelect, setHideSafeAreaButtom , setCurrentOrientation},
     {
-        currentTab: {
-          // url: defaultUrl
-        },
+        currentTab: "",
         hideSafeAreaButtom: false,
         enterTabSelect: true
     }

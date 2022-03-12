@@ -10,7 +10,7 @@ import { Context as TabContext} from '../context/tabContext';
 
 const BrowserActionBar = ({ browserRef, canGoBack, canGoForward, url }) => {
 
-    const { state: currentState, setCurrentTab , setEnterTabSelect, setEnterFavSelect } = useContext(CurrentContext);
+    const { state: currentState , setEnterTabSelect, setEnterFavSelect } = useContext(CurrentContext);
     const { state: tabState, addNewTab, updateTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
 
     const handleGoBack = () => {
@@ -32,7 +32,6 @@ const BrowserActionBar = ({ browserRef, canGoBack, canGoForward, url }) => {
         }
     }
     const handleSelectTab = async () => {
-        // setCurrentTab({})
         setEnterTabSelect(true)
 
         const result = await captureRef(browserRef, {
@@ -42,7 +41,7 @@ const BrowserActionBar = ({ browserRef, canGoBack, canGoForward, url }) => {
           });
         // console.log(result)
 
-        let updatedTab = {id:currentState.currentTab?.id ,view:result}
+        let updatedTab = {id:currentState.currentTab ,view:result}
         updateTab(updatedTab)
     }
 
