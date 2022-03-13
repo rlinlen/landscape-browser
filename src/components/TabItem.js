@@ -15,7 +15,14 @@ const ITEM_MARGIN = ITEM_OFFSET * 2;
 const ITEM_HEIGHT = (SCREEN_WIDTH - ITEM_MARGIN) / numColumns;
 
 const TabItem = ({ item, handleTabPressOut, handleTabClose }) => {
+    // console.log(`item.icon:`)
     // console.log(item.icon)
+
+    let showIcon = false
+    if (item.icon && item.icon.startsWith("data:image")){
+        showIcon = true
+    }
+
     return (
         <View style={styles.container}>
             <Pressable
@@ -38,18 +45,19 @@ const TabItem = ({ item, handleTabPressOut, handleTabClose }) => {
             <View style={{
                 // flex:1, 
                 // backgroundColor:'blue',
+                paddingLeft:10,
                 flexDirection: "row",
-                // justifyContent: "space-between",
+                justifyContent: "center",
                 alignItems: "center"}}>
-                <Image
+                {showIcon && <Image
                     style={styles.icon}
                     source={{
                         // uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg=='
                         uri: item.icon
                     }}
-                />
+                />}
                 {/* <Text style={styles.title}>{item.title ? item.title : item.url}</Text> */}
-                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
             </View>
         </View>
     )
@@ -80,8 +88,9 @@ const styles = StyleSheet.create({
     title: {
         color: 'white',
         // backgroundColor: 'red',
-        margin: 10,
-        textAlign: 'center'
+        margin: 8,
+        textAlign: 'center',
+        // paddingLeft: 1
     },
     closeIcon: {
         // zIndex:1,

@@ -42,12 +42,18 @@ export const getIcon = async (url) => {
   try {
     // https://stackoverflow.com/questions/10282939/how-to-get-favicons-url-from-a-generic-webpage-in-javascript
     // let defaultIconUrl= 'https://s2.googleusercontent.com/s2/favicons?domain_url='
-    let defaultIconUrl = '/favicon.ico'
+    let defaultIconUrl = 'favicon.ico'
     let newUrl = url.endsWith('/') ? url.slice(0, -1) : url
     // const response = await fetch(`${defaultIconUrl}${url}`)
 
-    if (url.startsWith('https')){
-      let faviconUrl = `${newUrl}${defaultIconUrl}`
+    if (newUrl.startsWith('https')){
+
+      let domain = (new URL(newUrl));
+      // console.log(domain.protocol);
+      // console.log(domain.hostname);
+
+      // let faviconUrl = `${newUrl}${defaultIconUrl}`
+      let faviconUrl = `${domain.protocol}//${domain.hostname}/${defaultIconUrl}`
       const response = await fetch(faviconUrl)
       const imageBlob = await response.blob();
       // const imageObjectURL = URL.createObjectURL(imageBlob);

@@ -1,10 +1,13 @@
 import React, { useContext } from 'react';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import 'react-native-url-polyfill/auto';
+import { ModalPortal } from 'react-native-modals';
 
 import Main from './src/components/Main';
 import { Provider as TabProvider } from './src/context/tabContext';
 import { Provider as CurrentProvider } from './src/context/currentContext';
 import { Provider as FavoriteProvider } from './src/context/favoriteContext';
+import { Provider as PerferenceProvider } from './src/context/preferenceContext';
 
 
 export default function App() {
@@ -14,13 +17,16 @@ export default function App() {
     //   <Text>Open up App.js to start working on your app!</Text>
     //   <StatusBar style="auto" />
     // </View>
-    <CurrentProvider>
-      <TabProvider>
-        <FavoriteProvider>
-          <Main />
-        </FavoriteProvider>
-      </TabProvider>
-    </CurrentProvider>
+    <PerferenceProvider>
+      <CurrentProvider>
+        <TabProvider>
+          <FavoriteProvider>
+            <Main />
+            <ModalPortal />
+          </FavoriteProvider>
+        </TabProvider>
+      </CurrentProvider>
+    </PerferenceProvider>
   );
 }
 

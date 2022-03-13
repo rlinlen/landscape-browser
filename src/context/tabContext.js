@@ -7,22 +7,49 @@ import { storeData, getStoreData, getIcon, isEmpty } from '../util/misc';
 
 const tabReducer = (state, action) => {
     switch (action.type) {
-        case 'add_tab':
-            return [...state, action.payload];
-        case 'update_tab':
+        case 'get_saved_tabs':{
+            const firstPage = {
+                url: defaultUrl,
+                id: uuid(),
+                title: "",
+            }
+            return action.payload ? action.payload : []
+        }
+        case 'add_tab':{
+            const tabs = [...state, action.payload]
+            storeData('tabs',tabs)
+            return tabs;
+        }
+        case 'update_tab':{
             // console.log(action.payload)
             let objIndex = state.findIndex((obj => obj.id == action.payload.id));
             let updatedTab = Object.assign({}, state[objIndex])
             Object.assign(updatedTab, action.payload)
-            return [...state.slice(0, objIndex), updatedTab, ...state.slice(objIndex + 1)]
-        case 'delete_one_tab':
-            return state.filter(tab => tab.id != action.payload.id)
-        case 'delete_all_tabs':
+            const tabs = [...state.slice(0, objIndex), updatedTab, ...state.slice(objIndex + 1)]
+            storeData('tabs',tabs)
+            return tabs
+        }
+        case 'delete_one_tab':{
+            const tabs = state.filter(tab => tab.id != action.payload.id)
+            storeData('tabs',tabs)
+            return tabs
+        }
+        case 'delete_all_tabs':{
+            storeData('tabs',[])
             return []
+        }
         default:
             return state;
     }
 };
+
+const getSavedTabs = dispatch => {
+    return async () => {
+        let newTabs = await getStoreData('tabs', [])
+        // console.log(newFav)
+        dispatch({ type: 'get_saved_tabs', payload: newTabs});
+    };
+  };
 
 const addNewTab = dispatch => {
     return async (url) => {
@@ -47,6 +74,7 @@ const addNewTab = dispatch => {
 const updateTab = dispatch => {
     return async (tabUpdateInfo) => {
             let icon = ''
+            // console.log(`tabUpdateInfo`)
             // console.log(tabUpdateInfo?.url)
             if (tabUpdateInfo?.url?.startsWith('http')) {
                 icon = await getIcon(tabUpdateInfo.url)
@@ -72,10 +100,6 @@ const deleteAllTabs = dispatch => {
 
 export const { Context, Provider } = createDataContext(
     tabReducer,
-    { addNewTab, updateTab, deleteOneTab, deleteAllTabs },
-    [{
-        url: defaultUrl,
-        id: uuid(),
-        title: "",
-    }]
+    { getSavedTabs, addNewTab, updateTab, deleteOneTab, deleteAllTabs },
+    []
 );

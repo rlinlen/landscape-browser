@@ -8,9 +8,9 @@ import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext } from '../context/tabContext';
 
 
-const TabView = ({numColumns, isLandscape}) => {
+const TabView = ({ numColumns, isLandscape }) => {
 
-    const { state: currentState, setCurrentTab , setEnterTabSelect} = useContext(CurrentContext);
+    const { state: currentState, setCurrentTab, setEnterTabSelect } = useContext(CurrentContext);
     const { state: tabState, addNewTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
 
     const handleTabPressOut = (item) => {
@@ -22,20 +22,30 @@ const TabView = ({numColumns, isLandscape}) => {
     const handleTabClose = (item) => {
         // console.log(item)
         deleteOneTab(item)
-    } 
+    }
 
-    const ShowHello = ({data}) => {
-        if (data.length == 0){
+    const ShowHello = ({ data }) => {
+        if (data.length == 0) {
             // console.log('tes')
             return (
-                <Text style={{
-                    color:'white',
-                    fontSize: 20
-                }}>
-                    Welcome! {"\n"}
-                    Click + to add new tab. {"\n"}
-                    When navigating, Click setting icon top left to rotate the screen in lock mode.
-                </Text>
+                <>
+                    <Text style={{
+                        color: 'white',
+                        fontSize: 30,
+                        paddingVertical: 20
+                    }}>
+                        Welcome to Landscape Browser! {"\n"}
+                    </Text>
+                    <Text style={{
+                        color: 'white',
+                        fontSize: 20
+                    }}>
+                        Click + to add new tab. {"\n"}
+                        {"\n"}
+                        When navigating, Click setting icon top left to rotate the screen in lock mode.
+                    </Text>
+                </>
+
             )
         } else {
             // console.log(data)
@@ -43,25 +53,25 @@ const TabView = ({numColumns, isLandscape}) => {
                 <></>
             )
         }
-        
+
     }
     return (
         <View style={[styles.container]}>
-            <ShowHello data={tabState}/>
+            <ShowHello data={tabState} />
             <FlatList
-                style={isLandscape ? {width:'90%', alignSelf:'center'} : {}}
+                style={isLandscape ? { width: '90%', alignSelf: 'center' } : {}}
                 // columnWrapperStyle={{flex:1}}
                 data={tabState}
                 renderItem={({ item }) => (
-                    <TabItem 
-                        item={item} 
-                        handleTabPressOut={handleTabPressOut} 
+                    <TabItem
+                        item={item}
+                        handleTabPressOut={handleTabPressOut}
                         handleTabClose={handleTabClose}
                     />)}
                 keyExtractor={item => item.id}
                 numColumns={numColumns}
             />
-            <TabActionBar />
+            <TabActionBar tabNumber={tabState.length} />
         </View>
     )
 

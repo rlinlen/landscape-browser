@@ -29,6 +29,8 @@ const FavoriteItem = ({item, handleItemSelect, handleItemDelete}) => {
       ]
     );
 
+    console.log(`item.icon:`)
+    console.log(item.icon)
     return (
         <View style={styles.container}>
             <Pressable
@@ -49,7 +51,7 @@ const FavoriteItem = ({item, handleItemSelect, handleItemDelete}) => {
             >
                 <AntDesign name="closecircle" size={20} color="black" />
             </Pressable> */}
-            <Text style={styles.title}>{item.title ? item.title : item.url}</Text>
+            <Text style={styles.title} numberOfLines={2}>{item.title ? item.title : item.url}</Text>
         </View>
     )
 };
@@ -74,7 +76,7 @@ const styles = StyleSheet.create({
     title:{
         color: 'white',
         // backgroundColor: 'red',
-        margin: 10,
+        margin: 8,
         textAlign:'center'
     },
     closeIcon:{

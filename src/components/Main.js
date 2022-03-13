@@ -9,7 +9,7 @@ import FavoriteView from './FavoriteView'
 import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext } from '../context/tabContext';
 import { Context as FavoriteContext } from '../context/favoriteContext';
-
+import { Context as PreferenceContext } from '../context/preferenceContext';
 import { isEmpty } from '../util/appConstant'
 
 const usePrevious = (value) => {
@@ -25,14 +25,15 @@ const usePrevious = (value) => {
 const Main = () => {
 
     const { state: currentState, setCurrentTab, setCurrentOrientation } = useContext(CurrentContext);
-    const { state: tabState, addNewTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
+    const { state: tabState, getSavedTabs, deleteOneTab, deleteAllTabs } = useContext(TabContext);
     const { state: favState, getAllFavs } = useContext(FavoriteContext);
+    const { state: preferenceState, getUserPreference } = useContext(PreferenceContext);
 
     const [numTabColumns, setNumTabColumns] = useState(2);
 
     const prevTabState = usePrevious(tabState);
     useEffect(() => {
-        console.log(`tabstate updated detected!:${JSON.stringify(tabState)}`)
+        // console.log(`tabstate updated detected!:${JSON.stringify(tabState)}`)
         // let currentTab = currentState?.currentTab
         // console.log(currentTab?.id)
         // if new tab is added
@@ -45,7 +46,9 @@ const Main = () => {
     }, [tabState])
 
     useEffect(() => {
+        getSavedTabs()
         getAllFavs()
+        getUserPreference()
     }, [])
 
     let safeAreaPosition = currentState?.hideSafeAreaButtom ? 'absolute' : 'relative'
@@ -125,8 +128,8 @@ const Main = () => {
                     {/* <Browser initInfo={currentTab} containerStyle={{display: 'none'}}/> */}
                     {
                         tabState.map((item) => {
-                            console.log(`item.id:${item?.id}`)
-                            console.log(`currentTab.id:${currentTab}`)
+                            // console.log(`item.id:${item?.id}`)
+                            // console.log(`currentTab.id:${currentTab}`)
                             return(
                                 <Browser 
                                     initInfo={item} 

@@ -1,38 +1,71 @@
-import React, { useContext, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Pressable } from 'react-native';
+import React, { useContext, useState, useRef } from 'react';
+import { StyleSheet, Text, View, Alert, TouchableOpacity, Pressable } from 'react-native';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
-import * as Linking from "expo-linking";
 
-import { Context as CurrentContext} from '../context/currentContext';
-import { Context as TabContext} from '../context/tabContext';
+import { Context as CurrentContext } from '../context/currentContext';
+import { Context as TabContext } from '../context/tabContext';
+import ModalConfirm from './ModalConfirm';
 
 
-const TabActionBar = ({ }) => {
+
+const TabActionBar = ({ tabNumber }) => {
 
     const { state: currentState, setEnterTabSelect } = useContext(CurrentContext);
-    const { state: tabState, addNewTab , deleteOneTab , deleteAllTabs } = useContext(TabContext);
+    const { state: tabState, addNewTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
 
+    const [showDeleteAllTabDialog, setShowDeleteAllTabDialog] = useState(false);
+
+
+    const createTwoButtonAlert = () =>
+        Alert.alert(
+            "Close all tabs?",
+            "",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => setShowDeleteAllTabDialog(false),
+                    style: "cancel"
+                },
+                {
+                    text: "Close",
+                    onPress: () => handleCloseAll(),
+                    style: "destructive"
+                }
+            ]
+        );
 
     const handleCloseAll = () => {
+        setShowDeleteAllTabDialog(false)
         deleteAllTabs()
     }
     const handleAdd = () => {
         addNewTab()
         setEnterTabSelect(false)
     }
-    const handleDone = () => {
-        setEnterTabSelect(false)
+    const handleDone = (tabNumber) => {
+        if (tabNumber) {
+            setEnterTabSelect(false)
+        }
     }
 
     return (
         <View style={styles.browserOpsContainer}>
+            {/* <ModalConfirm
+                dialogContent="Close all tabs?"
+                handleConfirm={handleCloseAll}
+                handleCancel={ () => setShowDeleteAllTabDialog(false)}
+                confirmText="Close"
+                cancelText="Cancel"
+                visible={showDeleteAllTabDialog}
+            /> */}
             <TouchableOpacity
                 // style={styles.changeOrientationButton}
-                onPress={() => handleCloseAll()}
+                // onPress={() => setShowDeleteAllTabDialog(true)}
+                onPress={createTwoButtonAlert}
                 style={styles.barTouch}
             // disabled={!navState.canGoBack}
             >
-                <Text style={[styles.barText,{textAlign: 'left'}]} >Close All</Text>
+                <Text style={[styles.barText, { textAlign: 'left' }]} >Close All</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 // style={styles.changeOrientationButton}
@@ -43,11 +76,11 @@ const TabActionBar = ({ }) => {
             </TouchableOpacity>
             <TouchableOpacity
                 // style={styles.changeOrientationButton}
-                onPress={() => handleDone()}
+                onPress={() => handleDone(tabNumber)}
                 style={[styles.barTouch]}
             >
                 {/* <AntDesign name="upload" size={24} color="white" /> */}
-                <Text style={[styles.barText,{textAlign: 'right'}]} >Done</Text>
+                <Text style={[styles.barText, { textAlign: 'right' }]} >{tabNumber ? "Done" : ""}</Text>
             </TouchableOpacity>
         </View>
     )
@@ -67,7 +100,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: '3%',
         // zIndex:1
     },
-    barTouch:{
+    barTouch: {
         flex: 1,
         // flexDirection: 'row',
         // flex:1,
@@ -86,7 +119,7 @@ const styles = StyleSheet.create({
         // flexBasis: 10,
         // width: '90%',
         color: 'rgb(83,174,226)',
-        textAlign:'center',
+        textAlign: 'center',
         // backgroundColor: 'red'
     }
 });

@@ -1,4 +1,4 @@
-import { useState, useRef, useContext, useEffect } from 'react';
+import { useState, useRef, useContext, useEffect, useDebugValue } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Pressable } from 'react-native';
 import { WebView } from 'react-native-webview';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -16,10 +16,12 @@ import BrowserActionBar from './BrowserActionBar';
 import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext } from '../context/tabContext';
 import { Context as FavoriteContext } from '../context/favoriteContext';
+import { Context as PreferenceContext } from '../context/preferenceContext';
 import BrowserAddressBar from './BrowserAddressBar';
 import { blobToDataURLPromise } from '../util/misc';
 import ProgressBar from './ProgressBar';
 import FavoriteView from './FavoriteView';
+import ModalPicker from './ModalPicker';
 
 
 const Browser = ({ initInfo , containerStyle }) => {
@@ -29,9 +31,11 @@ const Browser = ({ initInfo , containerStyle }) => {
   const { state: currentState, setHideSafeAreaButtom, setEnterFavSelect } = useContext(CurrentContext);
   const { state: tabState, addNewTab, updateTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
   const { addNewFav } = useContext(FavoriteContext);
+  const { state: userPreference, updateUserPreference} = useContext(PreferenceContext);
 
   const enterFavSelect = currentState?.enterFavSelect
   const currentOrientation = currentState?.currentOrientation
+  let searchEnginePreference = userPreference?.searchEngine
 
 
   const [forceReload, setForceReload] = useState(false);
@@ -44,6 +48,7 @@ const Browser = ({ initInfo , containerStyle }) => {
   const [showAddressBar, setShowAddressBar] = useState(true);
   const [showBottomBar, setShowBottomBar] = useState(true);
   const [loadProgress, setLoadProgress] = useState(0);
+  const [showSearchEngineSelector, setShowSearchEngineSelector] = useState(false);
   
 
   // const [isScrollUp, setIsScrollUp] = useState(false);
@@ -54,9 +59,9 @@ const Browser = ({ initInfo , containerStyle }) => {
   //   setNewUrl(event.url);
   // }
 
-  useEffect(()=>{
-    console.log('browser loaded')
-  },[])
+  // useEffect(()=>{
+  //   console.log('browser loaded')
+  // },[])
 
   useEffect(() => {
     // console.log('browser load new init')
@@ -68,7 +73,7 @@ const Browser = ({ initInfo , containerStyle }) => {
   })
 
   useEffect(() => {
-    console.log(`update initInfo:${initInfo.url}`)
+    // console.log(`update initInfo:${initInfo.url}`)
     setNewUrl(initInfo.url);
   }, [initInfo])
 
@@ -120,7 +125,7 @@ const Browser = ({ initInfo , containerStyle }) => {
     await ScreenOrientation.lockAsync(direction);
   }
 
-  const onNavigationStateChange = (navState) => {
+  const handleNavigationStateChange = (navState) => {
     // newNavState looks something like this:
     // {
     //   url?: string;
@@ -129,16 +134,24 @@ const Browser = ({ initInfo , containerStyle }) => {
     //   canGoBack?: boolean;
     //   canGoForward?: boolean;
     // }
+    
+
     const { canGoForward, canGoBack, title, url, loading } = navState;
     setNavState({ canGoForward, canGoBack, title, url, loading });
     // console.log(navState)
 
-    // setInputUrl(url);
-    setNewUrl(url);
+    // console.log(`handleNavigationStateChange:${url}, loading:${loading}`)
+    if (loading == false){
+      // It's important to check loading here.
+      // If not, when redirect happen it will cause bounce
+      setNewUrl(url);
+      let updatedTab = { ...initInfo, url, title }
+      updateTab(updatedTab)
+    }
+    
 
 
-    let updatedTab = { ...initInfo, url, title }
-    updateTab(updatedTab)
+    
 
     setShowAddressBar(true);
     showBottomBarAndSafeArea(true);
@@ -158,13 +171,15 @@ const Browser = ({ initInfo , containerStyle }) => {
   const handleAddressBarBlur = (setEnterFavSelect) => {
     setEnterFavSelect(false)
   }
-  const handleUrlSubmit = ({ nativeEvent }) => {
+  const handleUrlSubmit = ({ nativeEvent, searchEnginePreference }) => {
 
     // console.log(nativeEvent.text)
-    const newURL = upgradeURL(nativeEvent.text, defaultSearchEngine);
+    const newURL = upgradeURL(nativeEvent.text, searchEnginePreference);
     // Keyboard.dismiss();
 
     setNewUrl(newURL);
+
+    setEnterFavSelect(false);
     // let updatedTab = { url: newURL }
     // updateTab(updatedTab)
   }
@@ -193,7 +208,7 @@ const Browser = ({ initInfo , containerStyle }) => {
     // console.log('hellow')
     const { canGoForward, canGoBack, title, url, loading } = nativeEvent;
 
-    console.log(url)
+    // console.log(url)
     let updatedTab = { ...initInfo, url, title }
     // updateTab(updatedTab)
   }
@@ -207,16 +222,16 @@ const Browser = ({ initInfo , containerStyle }) => {
     setForceReload(!forceReload)
   }
   const handleChangeContentMode = () => {
-    // console.log(contentMode)
-    if (contentMode == 'desktop' || contentMode == 'recommended') {
+    console.log(contentMode)
+    if (contentMode == 'desktop') {
       setContentMode('mobile')
-    } else if (contentMode == 'mobile') {
+    } else if (contentMode == 'mobile'  || contentMode == 'recommended' ) {
       setContentMode('desktop')
     }
     // if (browserRef) {
     //   browserRef.current.reload();
     // }
-    setNewUrl(navState.url)
+    // setNewUrl(navState.url)
     setForceReload(!forceReload)
   }
   const handleTextIncrease = () => {
@@ -270,33 +285,13 @@ const Browser = ({ initInfo , containerStyle }) => {
     }
   }
   const handleAddFavorite = async () => {
-
-    // const getIcon = async (url) => {
-    //   try {
-    //     // https://stackoverflow.com/questions/10282939/how-to-get-favicons-url-from-a-generic-webpage-in-javascript
-    //     // let defaultIconUrl= 'https://s2.googleusercontent.com/s2/favicons?domain_url='
-    //     let defaultIconUrl = '/favicon.ico'
-    //     let newUrl = url.endsWith('/') ? url.slice(0, -1) : url
-    //     // const response = await fetch(`${defaultIconUrl}${url}`)
-    //     let faviconUrl = `${newUrl}${defaultIconUrl}`
-    //     const response = await fetch(faviconUrl)
-    //     const imageBlob = await response.blob();
-    //     // const imageObjectURL = URL.createObjectURL(imageBlob);
-    //     // console.log(imageObjectURL)
-
-    //     const imageDataUrl = await blobToDataURLPromise(imageBlob);
-    //     // console.log(imageDataUrl)
-    //     return imageDataUrl
-    //   } catch (error) {
-    //     console.log(error)
-    //   }
-    // }
-
-    // let icon = await getIcon(navState.url)
     addNewFav({
       url: navState.url,
       title: navState.title
     })
+  }
+  const handleChooseSearchEngine = () => {
+    setShowSearchEngineSelector(true)
   }
   const handleLoadProgress = ({ nativeEvent }) => {
     let loadingProgress = nativeEvent.progress;
@@ -397,12 +392,12 @@ const Browser = ({ initInfo , containerStyle }) => {
                   <MaterialCommunityIcons name="phone-rotate-landscape" size={24} color="white" />
                 </View>
               </MenuOption>
-              <MenuOption onSelect={handleChangeIncognito}>
+              {/* <MenuOption onSelect={handleChangeIncognito}>
                 <View style={styles.menuOption}>
                   <Text style={styles.menuOptionText}>{incognito ? 'Turn Off Incognito' : 'Turn On Incognito'}</Text>
                   <MaterialCommunityIcons name="incognito" size={24} color="white" />
                 </View>
-              </MenuOption>
+              </MenuOption> */}
               <MenuOption onSelect={handleChangeContentMode}>
                 <View style={styles.menuOption}>
                   <Text style={styles.menuOptionText}>{['recommended', 'mobile'].includes(contentMode) ? 'Request Desktop Mode' : 'Request Mobile Mode'}</Text>
@@ -415,6 +410,12 @@ const Browser = ({ initInfo , containerStyle }) => {
                   <MaterialCommunityIcons name="bookmark-check" size={24} color="white" />
                 </View>
               </MenuOption>
+              <MenuOption onSelect={handleChooseSearchEngine}>
+                <View style={styles.menuOption}>
+                  <Text style={styles.menuOptionText}>Set Search Engine</Text>
+                  <MaterialCommunityIcons name="search-web" size={24} color="white" />
+                </View>
+              </MenuOption>
             </MenuOptions>
           </Menu>
         </View>
@@ -424,19 +425,28 @@ const Browser = ({ initInfo , containerStyle }) => {
             // onChangeText={setInputUrl}
             // value={inputUrl}
             onFocus={() => handleAddressBarFocus(setEnterFavSelect)}
-            onBlur={() => handleAddressBarBlur(setEnterFavSelect)}
-            onSubmitEditing={handleUrlSubmit}
+            // onBlur={() => handleAddressBarBlur(setEnterFavSelect)}
+            onSubmitEditing={({nativeEvent}) => handleUrlSubmit({nativeEvent, searchEnginePreference})}
             loadProgress={loadProgress}
           />
         </View>
-        <View style={{ paddingHorizontal: 14 }}>
+        { enterFavSelect ?  <TouchableOpacity
+                // style={styles.changeOrientationButton}
+                onPress={() => setEnterFavSelect(false)}
+                style={[styles.barTouch]}
+            >
+                {/* <AntDesign name="upload" size={24} color="white" /> */}
+                <Text style={[{color: 'rgb(83,194,226)',paddingHorizontal:14}]} >Cancel</Text>
+            </TouchableOpacity>
+            :
+            <View style={{ paddingHorizontal: 14 }}>
           <TouchableOpacity
             // style={styles.changeOrientationButton}
             onPress={() => handleReload()}
           >
             <MaterialCommunityIcons name="reload" size={24} color="white" />
           </TouchableOpacity>
-        </View>
+        </View>}
       </View>}
 
       <View style={{ flex: 1 }}>
@@ -457,11 +467,17 @@ const Browser = ({ initInfo , containerStyle }) => {
           <WebView
             // onLoadStart={handleWebViewLoad}
             contentInset={{ top: addressBarHeight }}
+            onShouldStartLoadWithRequest= {(request => {
+              console.log(request)
+              return true
+            })}
             // automaticallyAdjustContentInsets={false}
+            // dataDetectorTypes={['lookupSuggestion','link']}
             contentInsetAdjustmentBehavior='scrollableAxes'
             source={{ uri: newUrl }}
             containerStyle={[{height: 0}]}
-            onNavigationStateChange={onNavigationStateChange}
+            onNavigationStateChange={handleNavigationStateChange}
+            // onLoadEnd={handleNavigationStateChange}
             incognito={incognito}
             contentMode={contentMode}
             allowsInlineMediaPlayback={true}
@@ -492,12 +508,21 @@ const Browser = ({ initInfo , containerStyle }) => {
             ref={browserRef}
           /> */}
         </Pressable>
-        {enterFavSelect && <FavoriteView setNewUrl={setNewUrl}></FavoriteView>}
+        {enterFavSelect && <FavoriteView setNewUrl={setNewUrl} isLandscape={currentOrientation}></FavoriteView>}
+        <ModalPicker 
+          visible={showSearchEngineSelector} 
+          setVisible={setShowSearchEngineSelector}
+          items={Object.keys(searchEngines).map((searchEngine)=>({label:searchEngine, value: searchEngine}))}
+          handleValueChange={(value) => updateUserPreference({searchEngine: value})}
+          selectedValue={searchEnginePreference}
+          >
+        </ModalPicker>
         {showBottomBar &&
           <BrowserActionBar
             canGoForward={navState.canGoForward}
             canGoBack={navState.canGoBack}
             browserRef={browserRef}
+            setShowBottomBar={setShowBottomBar}
             url={navState.url}
           />
         }

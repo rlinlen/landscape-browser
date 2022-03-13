@@ -10,7 +10,7 @@ import { Context as TabContext } from '../context/tabContext';
 import { Context as FavoriteContext } from '../context/favoriteContext';
 
 
-const FavoriteView = ({setNewUrl}) => {
+const FavoriteView = ({setNewUrl, isLandscape}) => {
 
     const { state: currentState, setCurrentTab , setEnterTabSelect, setEnterFavSelect} = useContext(CurrentContext);
     const { state: tabState, addNewTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
@@ -19,9 +19,9 @@ const FavoriteView = ({setNewUrl}) => {
     
 
     const handleItemSelect = (item) => {
+        // console.log(`favitemselected:${item.id}`)
         // console.log(item.url)
-        // console.log(item.url)
-        setCurrentTab(item.id)
+        // setCurrentTab(item.id)
         setNewUrl(item.url)
         // addNewTab(item.url)
         setEnterFavSelect(false)
@@ -32,10 +32,14 @@ const FavoriteView = ({setNewUrl}) => {
         // console.log(item)
         deleteOneFav(item)
     } 
+    const landscapeStyle = isLandscape ? {width:'90%', alignSelf:'center'} : {}
     return (
         <View style={styles.container}>
+            {/* <Pressable
+                // onPress={setEnterFavSelect(false)}
+            > */}
             <FlatList
-                style={styles.flatlistContainer}
+                style={[styles.flatlistContainer, landscapeStyle]}
                 // columnWrapperStyle={{flex:1}}
                 data={favState}
                 renderItem={({ item }) => (
@@ -47,6 +51,7 @@ const FavoriteView = ({setNewUrl}) => {
                 keyExtractor={item => item.id}
                 numColumns={4}
             />
+            {/* </Pressable> */}
             <FavoriteActionBar />
         </View>
     )

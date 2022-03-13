@@ -1,19 +1,9 @@
 TODO:
 
 
+open new page interception
+icon
 
-- Add tab support
--- prevent tab reload when switching 
--- tab navigate to correct position
--- tab title wrap and add favicon
-
-
--- search and tabview did not store tab state
-
-
-
-
-about blank error when go to fav
 
 stage 2:
 - Add reader mode
@@ -39,3 +29,12 @@ Done:
 - click address bar show fav
 -- tab width and colnum in landscape
 -- landscape safeare
+-- search and tabview did not store tab state
+- Add tab support
+-- prevent tab reload when switching 
+-- tab navigate to correct position
+-- tab title wrap and add favicon
+--tab action done will break when no tab
+tab action button padding
+save all state to async
+click on bar and faviorite selection not working
