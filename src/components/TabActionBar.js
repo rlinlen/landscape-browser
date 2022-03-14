@@ -10,7 +10,7 @@ import ModalConfirm from './ModalConfirm';
 
 const TabActionBar = ({ tabNumber }) => {
 
-    const { state: currentState, setEnterTabSelect } = useContext(CurrentContext);
+    const { state: currentState, setEnterTabSelect, setEnterFavSelect } = useContext(CurrentContext);
     const { state: tabState, addNewTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
 
     const [showDeleteAllTabDialog, setShowDeleteAllTabDialog] = useState(false);
@@ -41,6 +41,8 @@ const TabActionBar = ({ tabNumber }) => {
     const handleAdd = () => {
         addNewTab()
         setEnterTabSelect(false)
+        setEnterFavSelect(true)
+        // setShowBottomBar(false)
     }
     const handleDone = (tabNumber) => {
         if (tabNumber) {

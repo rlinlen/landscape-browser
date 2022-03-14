@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { StyleSheet, Text, View, Dimensions, Image, Pressable } from 'react-native';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
-// import { captureRef } from 'react-native-view-shot';
 
 const { width, height } = Dimensions.get('window');
 // orientation must fixed
@@ -39,6 +38,7 @@ const TabItem = ({ item, handleTabPressOut, handleTabClose }) => {
             <Pressable
                 onPress={e => handleTabClose(item)}
                 style={styles.closeIcon}
+                hitSlop={{top:5,bottom:5,left:5,right:5}}
             >
                 <AntDesign name="closecircle" size={20} color="black" />
             </Pressable>
@@ -57,7 +57,7 @@ const TabItem = ({ item, handleTabPressOut, handleTabClose }) => {
                     }}
                 />}
                 {/* <Text style={styles.title}>{item.title ? item.title : item.url}</Text> */}
-                <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+                <Text style={styles.title} numberOfLines={1}>{item.title ? item.title : ''}</Text>
             </View>
         </View>
     )

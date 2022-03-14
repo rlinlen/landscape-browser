@@ -1,5 +1,5 @@
 import { useState, useRef, useContext, useEffect, useDebugValue } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Alert, TouchableOpacity, Pressable } from 'react-native';
 import { WebView } from 'react-native-webview';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -11,7 +11,7 @@ import {
   renderers
 } from 'react-native-popup-menu';
 
-import { defaultUrl, searchEngines, defaultSearchEngine, addressBarHeight } from '../util/appConstant';
+import { defaultUrl, searchEngines, injectedJS, addressBarHeight } from '../util/appConstant';
 import BrowserActionBar from './BrowserActionBar';
 import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext } from '../context/tabContext';
@@ -293,6 +293,10 @@ const Browser = ({ initInfo , containerStyle }) => {
   const handleChooseSearchEngine = () => {
     setShowSearchEngineSelector(true)
   }
+  const handleAbout = () => {
+    let alertContext = "感謝您使用枕邊瀏覽器。本App並不是要取代任何瀏覽器，亦不推薦做為日常使用。只有當你發現一個網站適合你睡前側躺且橫向瀏覽時，可使用本瀏覽器來鎖定方向。由於人手僅有一人請多包涵。如果您對商業合作有興趣或是發現問題，歡迎透過以下方式聯繫我: len@lenlin.org"
+    Alert.alert(alertContext)
+  }
   const handleLoadProgress = ({ nativeEvent }) => {
     let loadingProgress = nativeEvent.progress;
     // console.log(loadingProgress)
@@ -413,7 +417,13 @@ const Browser = ({ initInfo , containerStyle }) => {
               <MenuOption onSelect={handleChooseSearchEngine}>
                 <View style={styles.menuOption}>
                   <Text style={styles.menuOptionText}>Set Search Engine</Text>
-                  <MaterialCommunityIcons name="search-web" size={24} color="white" />
+                  <MaterialCommunityIcons name="search-web" size={25} color="white" />
+                </View>
+              </MenuOption>
+              <MenuOption onSelect={handleAbout}>
+                <View style={styles.menuOption}>
+                  <Text style={styles.menuOptionText}>About</Text>
+                  <MaterialCommunityIcons name="information-outline" size={22} color="white" />
                 </View>
               </MenuOption>
             </MenuOptions>
@@ -467,10 +477,12 @@ const Browser = ({ initInfo , containerStyle }) => {
           <WebView
             // onLoadStart={handleWebViewLoad}
             contentInset={{ top: addressBarHeight }}
-            onShouldStartLoadWithRequest= {(request => {
-              console.log(request)
-              return true
-            })}
+            // onShouldStartLoadWithRequest= {(request => {
+            //   console.log(request)
+            //   return true
+            // })}
+            injectJavaScript={injectedJS}
+            onMessage={()=>{}}
             // automaticallyAdjustContentInsets={false}
             // dataDetectorTypes={['lookupSuggestion','link']}
             contentInsetAdjustmentBehavior='scrollableAxes'

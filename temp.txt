@@ -1,11 +1,12 @@
 TODO:
 
 
-open new page interception
+
 icon
 
 
 stage 2:
+- add localization
 - Add reader mode
 - add theme change
 - add auto stop
@@ -17,7 +18,7 @@ stage 2:
 
 Done:
 - add swipe show/hide
-
+open new page interception
 -- replace captureref
 - add clean address bar
 - textinput not showing keyboard

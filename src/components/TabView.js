@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { StyleSheet, Text, ScrollView, View, TextInput, TouchableOpacity, Pressable, FlatList } from 'react-native';
+import React, { useContext, useEffect ,useRef } from 'react';
+import { StyleSheet, Text, Dimensions, View, TextInput, TouchableOpacity, Pressable, FlatList } from 'react-native';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import TabItem from './TabItem';
@@ -7,14 +7,50 @@ import TabActionBar from './TabActionBar';
 import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext } from '../context/tabContext';
 
+const { width, height } = Dimensions.get('window');
+const SCREEN_WIDTH = width < height ? width : height;
+const isSmallDevice = SCREEN_WIDTH <= 414;
+const numColumns = isSmallDevice ? 2 : 3;
+
+const ITEM_OFFSET = 10;
+const ITEM_MARGIN = ITEM_OFFSET * 2;
+const ITEM_HEIGHT = (SCREEN_WIDTH - ITEM_MARGIN) / numColumns;
 
 const TabView = ({ numColumns, isLandscape }) => {
 
     const { state: currentState, setCurrentTab, setEnterTabSelect } = useContext(CurrentContext);
     const { state: tabState, addNewTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
 
+    const tabviewRef = useRef(null);
+
+    
+    useEffect(()=>{
+        let currentTab = currentState?.currentTab
+
+        // console.log(currentTab)
+        // tabviewRef.current.scrollToItem({
+        //     animated: false,
+        //     item:{
+        //         id: currentTab
+        //     }
+        // })
+        // tabviewRef.current.scrollToOffset({animated:false,offset:100})
+        if(tabState.length){
+            // let row = Math.floor((tabState.length-1)/2)
+            let tabIndex = tabState.findIndex(item => item.id==currentTab)
+            let row =  Math.floor((tabIndex)/2)
+            tabviewRef.current.scrollToIndex({
+                'animated':false,
+                'index': row,
+                'viewOffset':30
+                // 'viewPosition':0
+            })
+        }
+        
+    },[])
+
     const handleTabPressOut = (item) => {
-        console.log('handleTabPressOut')
+        // console.log('handleTabPressOut')
         setCurrentTab(item.id)
         setEnterTabSelect(false)
     }
@@ -70,8 +106,14 @@ const TabView = ({ numColumns, isLandscape }) => {
                     />)}
                 keyExtractor={item => item.id}
                 numColumns={numColumns}
+                ref={tabviewRef}
+                // onContentSizeChange={()=>tabviewRef.current.scrollToEnd()}
+                getItemLayout={(data, index) => (
+                    {length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index}
+                  )}
+                ListFooterComponent={<View style={{padding:20}}></View>}
             />
-            <TabActionBar tabNumber={tabState.length} />
+            <TabActionBar tabNumber={tabState.length}/>
         </View>
     )
 

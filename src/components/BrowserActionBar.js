@@ -32,22 +32,35 @@ const BrowserActionBar = ({ browserRef, canGoBack, canGoForward, setShowBottomBa
         }
     }
     const handleSelectTab = async () => {
+        setEnterFavSelect(false)
         setEnterTabSelect(true)
 
-        const result = await captureRef(browserRef, {
-            result: 'data-uri',
-            quality: 0,
-            format: 'jpg',
-          });
+        let result = ''
+            // console.log(browserRef)
+        try{
+            result = await captureRef(browserRef, {
+                result: 'data-uri',
+                quality: 0,
+                format: 'jpg',
+                });
+        } catch(error){
+            console.log(error)
+        }
+            
+        
         // console.log(result)
-
-        let updatedTab = {id:currentState.currentTab ,view:result}
+        let updatedTab = {id:currentState.currentTab}
+        if (result){
+            updatedTab['view'] = result
+        }
+        
         updateTab(updatedTab)
+        
     }
 
     const handleSelectFavorite = () => {
         setEnterFavSelect(true)
-        setShowBottomBar(false)
+        // setShowBottomBar(false)
     }
 
 

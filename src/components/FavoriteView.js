@@ -9,6 +9,18 @@ import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext } from '../context/tabContext';
 import { Context as FavoriteContext } from '../context/favoriteContext';
 
+const FavoriteHeader = () => {
+    return (
+        <Text style={{
+            fontSize:20,
+            fontWeight:'bold',
+            color:'white',
+            padding: 16
+        }}>
+            Favorites
+        </Text>
+    )
+}
 
 const FavoriteView = ({setNewUrl, isLandscape}) => {
 
@@ -50,9 +62,10 @@ const FavoriteView = ({setNewUrl, isLandscape}) => {
                     />)}
                 keyExtractor={item => item.id}
                 numColumns={4}
+                ListHeaderComponent={FavoriteHeader()}
             />
             {/* </Pressable> */}
-            <FavoriteActionBar />
+            {/* <FavoriteActionBar /> */}
         </View>
     )
 
