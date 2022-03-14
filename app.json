@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "landscape-browser",
+    "name": "Landscape Browser",
     "slug": "landscape-browser",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,7 +18,11 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "requireFullScreen": true
+      "requireFullScreen": true,
+      "bundleIdentifier": "org.lenlin.landscape-browser",
+      "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -29,6 +33,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": ""
+    "description": "",
+    "locales": {
+      "zh": "./languages/zh.json"
+    }
   }
 }

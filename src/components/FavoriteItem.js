@@ -29,8 +29,8 @@ const FavoriteItem = ({item, handleItemSelect, handleItemDelete}) => {
       ]
     );
 
-    console.log(`item.icon:`)
-    console.log(item.icon)
+    // console.log(`item.icon:`)
+    // console.log(item.icon)
     return (
         <View style={styles.container}>
             <Pressable
@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
         // justifyContent: 'space-between',
         margin: ITEM_MARGIN,
         borderRadius: 10,
-        width: (SCREEN_WIDTH - ITEM_MARGIN) / numColumns - ITEM_MARGIN -ITEM_OFFSET,
-        height: (SCREEN_WIDTH - ITEM_MARGIN) / numColumns - ITEM_MARGIN -ITEM_OFFSET,
+        width: (SCREEN_WIDTH - ITEM_MARGIN) / numColumns - ITEM_MARGIN,
+        height: (SCREEN_WIDTH - ITEM_MARGIN) / numColumns - ITEM_MARGIN,
         backgroundColor: 'white',
         flexDirection: 'column',
         // overflow: 'hidden'

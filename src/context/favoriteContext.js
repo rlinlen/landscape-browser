@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid';
 
 import createDataContext from './createDataContext';
 import { storeData, getStoreData , getIcon} from '../util/misc';
+import {defaultFavItem} from '../util/appConstant';
 
 
 const favoriteReducer = (state, action) => {
@@ -64,7 +65,13 @@ const addNewFav = dispatch => {
 
 const getAllFavs = dispatch => {
     return async () => {
+        
         let newFav = await getStoreData('favorite', [])
+        if (newFav.length == 0){
+            let icon = await getIcon(defaultFavItem.url)
+            defaultFavItem['icon'] = icon
+            newFav = [defaultFavItem]
+        }
         // console.log(newFav)
         dispatch({ type: 'get_all_favs', payload: newFav});
     };

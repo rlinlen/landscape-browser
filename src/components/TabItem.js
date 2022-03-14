@@ -11,7 +11,7 @@ const numColumns = isSmallDevice ? 2 : 3;
 
 const ITEM_OFFSET = 10;
 const ITEM_MARGIN = ITEM_OFFSET * 2;
-const ITEM_HEIGHT = (SCREEN_WIDTH - ITEM_MARGIN) / numColumns;
+const ITEM_HEIGHT = (SCREEN_WIDTH - ITEM_MARGIN) / numColumns + ITEM_OFFSET;
 
 const TabItem = ({ item, handleTabPressOut, handleTabClose }) => {
     // console.log(`item.icon:`)
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     container: {
         // justifyContent: 'space-between',
         margin: ITEM_MARGIN,
-        borderRadius: 10,
+        borderRadius: 20,
         width: (SCREEN_WIDTH - ITEM_MARGIN) / numColumns - ITEM_MARGIN - ITEM_OFFSET,
         height: ITEM_HEIGHT,
         backgroundColor: 'white',

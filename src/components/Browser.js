@@ -11,7 +11,7 @@ import {
   renderers
 } from 'react-native-popup-menu';
 
-import { defaultUrl, searchEngines, injectedJS, addressBarHeight } from '../util/appConstant';
+import { defaultUrl, searchEngines, injectedJS, addressBarHeight, version } from '../util/appConstant';
 import BrowserActionBar from './BrowserActionBar';
 import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext } from '../context/tabContext';
@@ -222,7 +222,7 @@ const Browser = ({ initInfo , containerStyle }) => {
     setForceReload(!forceReload)
   }
   const handleChangeContentMode = () => {
-    console.log(contentMode)
+    // console.log(contentMode)
     if (contentMode == 'desktop') {
       setContentMode('mobile')
     } else if (contentMode == 'mobile'  || contentMode == 'recommended' ) {
@@ -294,7 +294,7 @@ const Browser = ({ initInfo , containerStyle }) => {
     setShowSearchEngineSelector(true)
   }
   const handleAbout = () => {
-    let alertContext = "感謝您使用枕邊瀏覽器。本App並不是要取代任何瀏覽器，亦不推薦做為日常使用。只有當你發現一個網站適合你睡前側躺且橫向瀏覽時，可使用本瀏覽器來鎖定方向。由於人手僅有一人請多包涵。如果您對商業合作有興趣或是發現問題，歡迎透過以下方式聯繫我: len@lenlin.org"
+    let alertContext = `感謝您使用枕邊瀏覽器。本App並不是要取代任何瀏覽器，亦不推薦做為日常使用。只有當你發現一個網站適合你睡前側躺且橫向瀏覽時，可使用本瀏覽器來鎖定方向。由於人手僅有一人請多包涵。如果您有更多想法或是發現問題，歡迎透過以下方式聯繫我:\nlen@lenlin.org \n v${version}`
     Alert.alert(alertContext)
   }
   const handleLoadProgress = ({ nativeEvent }) => {
@@ -440,6 +440,24 @@ const Browser = ({ initInfo , containerStyle }) => {
             loadProgress={loadProgress}
           />
         </View>
+        {currentOrientation &&
+          <View style={{ paddingLeft: 14 }}>
+          <TouchableOpacity
+              // style={styles.changeOrientationButton}
+              onPress={() => browserRef.current.injectJavaScript(`
+              window.scroll({
+                top: 0, 
+                left: 0, 
+                behavior: 'smooth'
+              })
+              `
+              )}
+              style={[styles.barTouch]}
+          >
+            <MaterialCommunityIcons name="format-align-top" size={24} color="white" />
+          </TouchableOpacity>
+          </View>
+        }
         { enterFavSelect ?  <TouchableOpacity
                 // style={styles.changeOrientationButton}
                 onPress={() => setEnterFavSelect(false)}
@@ -497,6 +515,7 @@ const Browser = ({ initInfo , containerStyle }) => {
             forceDarkOn={true}
             allowsBackForwardNavigationGestures={true}
             onLoadProgress={handleLoadProgress}
+            decelerationRate="fast"
             key={forceReload}
             ref={browserRef}
           />
