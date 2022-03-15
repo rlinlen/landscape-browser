@@ -62,6 +62,7 @@ export const { Context, Provider } = createDataContext(
     {
         currentTab: "",
         hideSafeAreaButtom: false,
-        enterTabSelect: true
+        enterTabSelect: true,
+        currentOrientation:false
     }
   );

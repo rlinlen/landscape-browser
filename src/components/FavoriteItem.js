@@ -3,18 +3,20 @@ import { StyleSheet, Text, View, Dimensions, Image, Pressable ,Button, Alert} fr
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 // import { captureRef } from 'react-native-view-shot';
 
-const { width, height } = Dimensions.get('window');
-// orientation must fixed
-const SCREEN_WIDTH = width < height ? width : height;
-const isSmallDevice = SCREEN_WIDTH <= 414;
-const numColumns = isSmallDevice ? 4 : 8;
-// const SCREEN_HEIGHT = width < height ? height : width;
 
-const ITEM_OFFSET = 10;
-const ITEM_MARGIN = ITEM_OFFSET * 2;
-const ITEM_HEIGHT = (SCREEN_WIDTH - ITEM_MARGIN) / numColumns;
+const FavoriteItem = ({item, handleItemSelect, handleItemDelete , numColumns}) => {
+    const { width, height } = Dimensions.get('window');
+    // orientation must fixed
+    // const SCREEN_WIDTH = width < height ? width : height;
+    const SCREEN_SHORT_LENGTH = width < height ? width : height;
+    const isSmallDevice = SCREEN_SHORT_LENGTH <= 414;
+    // const numColumns = isSmallDevice ? 4 : 8;
+    // const numColumns = isLandscape ? 4 : 8
+    // const SCREEN_HEIGHT = width < height ? height : width;
 
-const FavoriteItem = ({item, handleItemSelect, handleItemDelete}) => {
+    const ITEM_OFFSET = 10;
+    const ITEM_MARGIN = ITEM_OFFSET * 2;
+
     const createTwoButtonAlert = () =>
     Alert.alert(
       "Delete",
@@ -30,9 +32,16 @@ const FavoriteItem = ({item, handleItemSelect, handleItemDelete}) => {
     );
 
     // console.log(`item.icon:`)
-    // console.log(item.icon)
+    // console.log(isLandscape)
+    // console.log((SCREEN_SHORT_LENGTH - ITEM_MARGIN) / numColumns - ITEM_MARGIN)
+    // console.log(`SCREEN_HEIGHT:${SCREEN_HEIGHT}`)
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, {
+            width: (SCREEN_SHORT_LENGTH - ITEM_MARGIN) / numColumns - ITEM_MARGIN ,
+            height: (SCREEN_SHORT_LENGTH - ITEM_MARGIN) / numColumns - ITEM_MARGIN,
+            marginHorizontal: ITEM_OFFSET ,
+            marginVertical: ITEM_MARGIN,
+        }]}>
             <Pressable
                 onPress={(e)=>handleItemSelect(item)}
                 onLongPress={createTwoButtonAlert}
@@ -59,10 +68,7 @@ const FavoriteItem = ({item, handleItemSelect, handleItemDelete}) => {
 const styles = StyleSheet.create({
     container:{
         // justifyContent: 'space-between',
-        margin: ITEM_MARGIN,
         borderRadius: 10,
-        width: (SCREEN_WIDTH - ITEM_MARGIN) / numColumns - ITEM_MARGIN,
-        height: (SCREEN_WIDTH - ITEM_MARGIN) / numColumns - ITEM_MARGIN,
         backgroundColor: 'white',
         flexDirection: 'column',
         // overflow: 'hidden'

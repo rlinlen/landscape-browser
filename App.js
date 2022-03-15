@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import 'react-native-url-polyfill/auto';
 import { ModalPortal } from 'react-native-modals';
-// import { StatusBar } from 'expo-status-bar';
+import { StatusBar } from 'expo-status-bar';
 
 
 import Main from './src/components/Main';
@@ -23,7 +23,7 @@ export default function App() {
       <CurrentProvider>
         <TabProvider>
           <FavoriteProvider>
-            {/* <StatusBar style="auto" /> */}
+            <StatusBar style="light" />
             <Main />
             <ModalPortal />
           </FavoriteProvider>

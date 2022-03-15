@@ -28,7 +28,8 @@ const FavoriteView = ({setNewUrl, isLandscape}) => {
     const { state: tabState, addNewTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
     const { state: favState, getAllFavs, deleteOneFav} = useContext(FavoriteContext);
 
-    
+    let currentOrientation = currentState?.currentOrientation
+    let numColumns= currentOrientation ? 8 : 4
 
     const handleItemSelect = (item) => {
         // console.log(`favitemselected:${item.id}`)
@@ -59,10 +60,12 @@ const FavoriteView = ({setNewUrl, isLandscape}) => {
                         item={item} 
                         handleItemSelect={handleItemSelect} 
                         handleItemDelete={handleItemDelete}
+                        numColumns={4}
                     />)}
                 keyExtractor={item => item.id}
-                numColumns={4}
+                numColumns={numColumns}
                 ListHeaderComponent={FavoriteHeader()}
+                key={currentOrientation}
             />
             {/* </Pressable> */}
             {/* <FavoriteActionBar /> */}

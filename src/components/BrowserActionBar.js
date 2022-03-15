@@ -59,7 +59,8 @@ const BrowserActionBar = ({ browserRef, canGoBack, canGoForward, setShowBottomBa
     }
 
     const handleSelectFavorite = () => {
-        setEnterFavSelect(true)
+        let enterFavSelect = currentState?.enterFavSelect
+        setEnterFavSelect(!enterFavSelect)
         // setShowBottomBar(false)
     }
 
