@@ -36,9 +36,10 @@ const TabView = ({ numColumns, isLandscape }) => {
         // })
         // tabviewRef.current.scrollToOffset({animated:false,offset:100})
         if(tabState.length){
+            // console.log(tabState)
             // let row = Math.floor((tabState.length-1)/2)
             let tabIndex = tabState.findIndex(item => item.id==currentTab)
-            let row =  Math.floor((tabIndex)/2)
+            let row =  Math.floor((tabIndex)/numColumns)
             tabviewRef.current.scrollToIndex({
                 'animated':false,
                 'index': row,

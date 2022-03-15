@@ -24,14 +24,14 @@ import FavoriteView from './FavoriteView';
 import ModalPicker from './ModalPicker';
 
 
-const Browser = ({ initInfo , containerStyle }) => {
+const Browser = ({ initInfo, containerStyle }) => {
 
   const browserRef = useRef(null);
 
   const { state: currentState, setHideSafeAreaButtom, setEnterFavSelect } = useContext(CurrentContext);
   const { state: tabState, addNewTab, updateTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
   const { addNewFav } = useContext(FavoriteContext);
-  const { state: userPreference, updateUserPreference} = useContext(PreferenceContext);
+  const { state: userPreference, updateUserPreference } = useContext(PreferenceContext);
 
   const enterFavSelect = currentState?.enterFavSelect
   const currentOrientation = currentState?.currentOrientation
@@ -49,7 +49,7 @@ const Browser = ({ initInfo , containerStyle }) => {
   const [showBottomBar, setShowBottomBar] = useState(true);
   const [loadProgress, setLoadProgress] = useState(0);
   const [showSearchEngineSelector, setShowSearchEngineSelector] = useState(false);
-  
+
 
   // const [isScrollUp, setIsScrollUp] = useState(false);
   // const [currentUrl, setCurrentUrl] = useState('');
@@ -134,24 +134,24 @@ const Browser = ({ initInfo , containerStyle }) => {
     //   canGoBack?: boolean;
     //   canGoForward?: boolean;
     // }
-    
+
 
     const { canGoForward, canGoBack, title, url, loading } = navState;
     setNavState({ canGoForward, canGoBack, title, url, loading });
     // console.log(navState)
 
     // console.log(`handleNavigationStateChange:${url}, loading:${loading}`)
-    if (loading == false){
+    if (loading == false) {
       // It's important to check loading here.
       // If not, when redirect happen it will cause bounce
       setNewUrl(url);
       let updatedTab = { ...initInfo, url, title }
       updateTab(updatedTab)
     }
-    
 
 
-    
+
+
 
     setShowAddressBar(true);
     showBottomBarAndSafeArea(true);
@@ -225,7 +225,7 @@ const Browser = ({ initInfo , containerStyle }) => {
     // console.log(contentMode)
     if (contentMode == 'desktop') {
       setContentMode('mobile')
-    } else if (contentMode == 'mobile'  || contentMode == 'recommended' ) {
+    } else if (contentMode == 'mobile' || contentMode == 'recommended') {
       setContentMode('desktop')
     }
     // if (browserRef) {
@@ -294,7 +294,8 @@ const Browser = ({ initInfo , containerStyle }) => {
     setShowSearchEngineSelector(true)
   }
   const handleAbout = () => {
-    let alertContext = `感謝您使用枕邊瀏覽器。本App並不是要取代任何瀏覽器，亦不推薦做為日常使用。只有當你發現一個網站適合你睡前側躺且橫向瀏覽時，可使用本瀏覽器來鎖定方向。由於人手僅有一人請多包涵。如果您有更多想法或是發現問題，歡迎透過以下方式聯繫我:\nlen@lenlin.org \n v${version}`
+    // let alertContext = `感謝您使用枕邊瀏覽器。本App並不是要取代任何瀏覽器，亦不推薦做為日常使用。只有當你發現一個網站適合你睡前側躺且橫向瀏覽時，可使用本瀏覽器來鎖定方向。由於人手僅有一人請多包涵。如果您有更多想法或是發現問題，歡迎透過以下方式聯繫我:\nlen@lenlin.org \n v${version}`
+    let alertContext = `Thanks for using the app. The intention of the app is not to replace other browser, but to provide a browser where when you are on the bed in the side-lying position, and you want to surf with lock in landscape mode, then this is it. \n We welcome any comment/bug report/idea via the email:\nlen@lenlin.org \n v${version}`
     Alert.alert(alertContext)
   }
   const handleLoadProgress = ({ nativeEvent }) => {
@@ -436,13 +437,13 @@ const Browser = ({ initInfo , containerStyle }) => {
             // value={inputUrl}
             onFocus={() => handleAddressBarFocus(setEnterFavSelect)}
             // onBlur={() => handleAddressBarBlur(setEnterFavSelect)}
-            onSubmitEditing={({nativeEvent}) => handleUrlSubmit({nativeEvent, searchEnginePreference})}
+            onSubmitEditing={({ nativeEvent }) => handleUrlSubmit({ nativeEvent, searchEnginePreference })}
             loadProgress={loadProgress}
           />
         </View>
         {currentOrientation &&
           <View style={{ paddingLeft: 14 }}>
-          <TouchableOpacity
+            <TouchableOpacity
               // style={styles.changeOrientationButton}
               onPress={() => browserRef.current.injectJavaScript(`
               window.scroll({
@@ -453,31 +454,31 @@ const Browser = ({ initInfo , containerStyle }) => {
               `
               )}
               style={[styles.barTouch]}
-          >
-            <MaterialCommunityIcons name="format-align-top" size={24} color="white" />
-          </TouchableOpacity>
+            >
+              <MaterialCommunityIcons name="format-align-top" size={24} color="white" />
+            </TouchableOpacity>
           </View>
         }
-        { enterFavSelect ?  <TouchableOpacity
-                // style={styles.changeOrientationButton}
-                onPress={() => setEnterFavSelect(false)}
-                style={[styles.barTouch]}
+        {enterFavSelect ? <TouchableOpacity
+          // style={styles.changeOrientationButton}
+          onPress={() => setEnterFavSelect(false)}
+          style={[styles.barTouch]}
+        >
+          {/* <AntDesign name="upload" size={24} color="white" /> */}
+          <Text style={[{ color: 'rgb(83,194,226)', paddingHorizontal: 14 }]} >Cancel</Text>
+        </TouchableOpacity>
+          :
+          <View style={{ paddingHorizontal: 14 }}>
+            <TouchableOpacity
+              // style={styles.changeOrientationButton}
+              onPress={() => handleReload()}
             >
-                {/* <AntDesign name="upload" size={24} color="white" /> */}
-                <Text style={[{color: 'rgb(83,194,226)',paddingHorizontal:14}]} >Cancel</Text>
+              <MaterialCommunityIcons name="reload" size={24} color="white" />
             </TouchableOpacity>
-            :
-            <View style={{ paddingHorizontal: 14 }}>
-          <TouchableOpacity
-            // style={styles.changeOrientationButton}
-            onPress={() => handleReload()}
-          >
-            <MaterialCommunityIcons name="reload" size={24} color="white" />
-          </TouchableOpacity>
-        </View>}
+          </View>}
       </View>}
 
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: 'black' }}>
         {/* <MainFrame 
           source={{ uri: newUrl ? newUrl : initInfo.url }}
           onNavigationStateChange={onNavigationStateChange}
@@ -489,8 +490,8 @@ const Browser = ({ initInfo , containerStyle }) => {
           innerRef={browserRef}
         /> */}
         <Pressable style={[{ flex: 1 },
-          enterFavSelect ? { display: 'none' } : {},
-          currentOrientation ? {width:'90%', alignSelf:'center'} : {}
+        enterFavSelect ? { display: 'none' } : {},
+        currentOrientation ? { width: '90%', alignSelf: 'center' } : {}
         ]} onPressIn={handlePressIn} onPressOut={handlePressOut}>
           <WebView
             // onLoadStart={handleWebViewLoad}
@@ -500,12 +501,12 @@ const Browser = ({ initInfo , containerStyle }) => {
             //   return true
             // })}
             injectJavaScript={injectedJS}
-            onMessage={()=>{}}
+            onMessage={() => { }}
             // automaticallyAdjustContentInsets={false}
             // dataDetectorTypes={['lookupSuggestion','link']}
             contentInsetAdjustmentBehavior='scrollableAxes'
             source={{ uri: newUrl }}
-            containerStyle={[{height: 0}]}
+            containerStyle={[{ height: 0 }]}
             onNavigationStateChange={handleNavigationStateChange}
             // onLoadEnd={handleNavigationStateChange}
             incognito={incognito}
@@ -540,13 +541,13 @@ const Browser = ({ initInfo , containerStyle }) => {
           /> */}
         </Pressable>
         {enterFavSelect && <FavoriteView setNewUrl={setNewUrl} isLandscape={currentOrientation}></FavoriteView>}
-        <ModalPicker 
-          visible={showSearchEngineSelector} 
+        <ModalPicker
+          visible={showSearchEngineSelector}
           setVisible={setShowSearchEngineSelector}
-          items={Object.keys(searchEngines).map((searchEngine)=>({label:searchEngine, value: searchEngine}))}
-          handleValueChange={(value) => updateUserPreference({searchEngine: value})}
+          items={Object.keys(searchEngines).map((searchEngine) => ({ label: searchEngine, value: searchEngine }))}
+          handleValueChange={(value) => updateUserPreference({ searchEngine: value })}
           selectedValue={searchEnginePreference}
-          >
+        >
         </ModalPicker>
         {showBottomBar &&
           <BrowserActionBar
