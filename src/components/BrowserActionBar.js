@@ -8,7 +8,7 @@ import {browserActionBarHeight} from '../util/appConstant';
 import { Context as CurrentContext} from '../context/currentContext';
 import { Context as TabContext} from '../context/tabContext';
 
-const BrowserActionBar = ({ browserRef, canGoBack, canGoForward, setShowBottomBar,url }) => {
+const BrowserActionBar = ({ browserRef, canGoBack, canGoForward, setShowBottomBar,url, additionalTabSelectHandler}) => {
 
     const { state: currentState , setEnterTabSelect, setEnterFavSelect } = useContext(CurrentContext);
     const { state: tabState, addNewTab, updateTab, deleteOneTab, deleteAllTabs } = useContext(TabContext);
@@ -32,6 +32,8 @@ const BrowserActionBar = ({ browserRef, canGoBack, canGoForward, setShowBottomBa
         }
     }
     const handleSelectTab = async () => {
+        additionalTabSelectHandler()
+        
         setEnterFavSelect(false)
         setEnterTabSelect(true)
 

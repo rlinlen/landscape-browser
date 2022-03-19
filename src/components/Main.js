@@ -103,33 +103,6 @@ const Main = () => {
 
 
 
-    // if (enterTabSelect){
-    //     return (
-    //         <>
-    //             <SafeAreaView style={{ backgroundColor: 'rgba(0,0,0,0.7)' }} />
-
-    //             <TabView numColumns={numTabColumns}/>
-    //             {/* <BrowserActionBar
-    //                 canGoForward={false}
-    //                 canGoBack={false}
-    //                 browserRef={null}
-    //                 url={false}
-    //             /> */}
-    //             <SafeAreaView style={[styles.container, { position: safeAreaPosition }]} />
-    //         </>
-    //     )
-    // } 
-    // else if (enterFavSelect){
-    //     return (
-    //         <>
-    //             <SafeAreaView style={{ backgroundColor: 'rgba(0,0,0,0.7)' }} />
-
-    //             <FavoriteView/>
-    //             <SafeAreaView style={[styles.container, { position: safeAreaPosition }]} />
-    //         </>
-    //     )
-    // } 
-    // else {
     return (
         <>
             <SafeAreaView style={{ backgroundColor: 'rgba(0,0,0,0.7)' }} />
@@ -150,19 +123,8 @@ const Main = () => {
                         })
                     }
                     
-                    {/* <Browser initInfo={currentTab}/> */}
-                    {/* <FlatList
-                        // style={styles.flatlistContainer}
-                        data={tabState}
-                        renderItem={({ item }) => (
-                            <Browser 
-                                initInfo={item}
-                            />)}
-                        // keyExtractor={item => item.id}
-                        // numColumns={4}
-                    /> */}
+                   
                 </MenuProvider>
-                {/* <Browser initInfo={currentTab} webView={webView}/> */}
             </View>
 
             {enterTabSelect && <TabView numColumns={numTabColumns} isLandscape={currentOrientation}/>}

@@ -12,6 +12,7 @@ export const defaultFavItem = {
     url: 'https://www.google.com/',
     title: 'Google'
 }
+export const defaultSmileToScrollThreshold = 0.12;
 // export const defaultUrl = ''
 export const defaultIcon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg=='
 

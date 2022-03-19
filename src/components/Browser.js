@@ -11,7 +11,7 @@ import {
   renderers
 } from 'react-native-popup-menu';
 
-import { defaultUrl, searchEngines, injectedJS, addressBarHeight, version } from '../util/appConstant';
+import { defaultUrl, searchEngines, injectedJS, addressBarHeight, version, defaultSmileToScrollThreshold } from '../util/appConstant';
 import BrowserActionBar from './BrowserActionBar';
 import { Context as CurrentContext } from '../context/currentContext';
 import { Context as TabContext } from '../context/tabContext';
@@ -22,6 +22,7 @@ import { blobToDataURLPromise } from '../util/misc';
 import ProgressBar from './ProgressBar';
 import FavoriteView from './FavoriteView';
 import ModalPicker from './ModalPicker';
+import AutoScroll from './AutoScroll';
 
 
 const Browser = ({ initInfo, containerStyle }) => {
@@ -35,7 +36,10 @@ const Browser = ({ initInfo, containerStyle }) => {
 
   const enterFavSelect = currentState?.enterFavSelect
   const currentOrientation = currentState?.currentOrientation
+
+  let currentTab = currentState?.currentTab
   let searchEnginePreference = userPreference?.searchEngine
+  let smileToScrollThreshold = userPreference?.smileToScrollThreshold || defaultSmileToScrollThreshold
 
 
   const [forceReload, setForceReload] = useState(false);
@@ -50,6 +54,7 @@ const Browser = ({ initInfo, containerStyle }) => {
   const [loadProgress, setLoadProgress] = useState(0);
   const [showSearchEngineSelector, setShowSearchEngineSelector] = useState(false);
   const [videoRotateCount, setVideoRotateCount] = useState(1);
+  const [isSmileToScroll, setIsSmileToScroll] = useState(false);
 
 
   // const [isScrollUp, setIsScrollUp] = useState(false);
@@ -123,6 +128,10 @@ const Browser = ({ initInfo, containerStyle }) => {
       direction = transformMatrix[nextDirectionPos]
     }
 
+    if ([ScreenOrientation.OrientationLock.LANDSCAPE_RIGHT,ScreenOrientation.OrientationLock.LANDSCAPE_LEFT].includes(direction)){
+      // disable smiletoscroll
+      setIsSmileToScroll(false)
+    }
 
     // console.log(direction)
     await ScreenOrientation.lockAsync(direction);
@@ -365,6 +374,9 @@ const Browser = ({ initInfo, containerStyle }) => {
       console.log(error)
     }
   }
+  const handleSmileToScroll = () => {
+    setIsSmileToScroll(!isSmileToScroll);
+  }
   const handleAddFavorite = async () => {
     addNewFav({
       url: navState.url,
@@ -376,7 +388,7 @@ const Browser = ({ initInfo, containerStyle }) => {
   }
   const handleAbout = () => {
     // let alertContext = `感謝您使用枕邊瀏覽器。本App並不是要取代任何瀏覽器，亦不推薦做為日常使用。只有當你發現一個網站適合你睡前側躺且橫向瀏覽時，可使用本瀏覽器來鎖定方向。由於人手僅有一人請多包涵。如果您有更多想法或是發現問題，歡迎透過以下方式聯繫我:\nlen@lenlin.org \n v${version}`
-    let alertContext = `Thanks for using the app. The intention of the app is not to replace other browser, but to provide a browser where when you are on the bed in the side-lying position, and you want to surf with lock in landscape mode, then this is it. \n We welcome any comment/bug report/idea via the email:\nlen@lenlin.org \n v${version}`
+    let alertContext = `Thanks for using the app. The intention of the app is not to replace other browser, but to provide a browser where when you are on the bed in the side-lying position, and you want to surf with lock in landscape mode, then this is it. \n Smile To Scroll currently only work in portrait mode. \n v${version}`
     Alert.alert(alertContext)
   }
   const handleLoadProgress = ({ nativeEvent }) => {
@@ -423,7 +435,7 @@ const Browser = ({ initInfo, containerStyle }) => {
       <Pressable style={{ flex: 1 }} onPressIn={handlePressIn} onPressOut={handlePressOut}>
         {/* {webView} */}
         <WebView
-
+          javaScriptCanOpenWindowsAutomatically={true}
           contentInset={{ top: addressBarHeight }}
           // automaticallyAdjustContentInsets={false}
           contentInsetAdjustmentBehavior='scrollableAxes'
@@ -434,6 +446,7 @@ const Browser = ({ initInfo, containerStyle }) => {
           // incognito={incognito}
           // contentMode={contentMode}
           allowsInlineMediaPlayback={true}
+          mediaPlaybackRequiresUserAction={true}
           // onScroll={onScroll}
           forceDarkOn={true}
           allowsBackForwardNavigationGestures={true}
@@ -473,6 +486,14 @@ const Browser = ({ initInfo, containerStyle }) => {
                   <MaterialCommunityIcons name="phone-rotate-landscape" size={24} color="white" />
                 </View>
               </MenuOption>
+              {
+              !currentOrientation && 
+              <MenuOption onSelect={() => handleSmileToScroll()}>
+                <View style={styles.menuOption}>
+                  <Text style={styles.menuOptionText}>{isSmileToScroll ? 'Disable' : 'Enable'} Smile to Scroll</Text>
+                  <AntDesign name="smileo" size={22} color="white" />
+                </View>
+              </MenuOption>}
               <MenuOption onSelect={() => handleTextIncrease()}>
                 <View style={styles.menuOption}>
                   <Text style={styles.menuOptionText}>Increase Font Size</Text>
@@ -576,7 +597,12 @@ const Browser = ({ initInfo, containerStyle }) => {
             </TouchableOpacity>
           </View>}
       </View>}
-
+      {currentTab == initInfo.id && isSmileToScroll && <AutoScroll 
+        browserRef={browserRef} 
+        isLandscape={currentOrientation}
+        smileToScrollThreshold={smileToScrollThreshold} 
+      />
+      }
       <View style={{ flex: 1, backgroundColor: 'black' }}>
         {/* <MainFrame 
           source={{ uri: newUrl ? newUrl : initInfo.url }}
@@ -599,7 +625,7 @@ const Browser = ({ initInfo, containerStyle }) => {
             //   console.log(request)
             //   return true
             // })}
-            injectJavaScript={injectedJS(currentOrientation)}
+            // injectJavaScript={injectedJS(currentOrientation)}
             onMessage={() => { }}
             // automaticallyAdjustContentInsets={false}
             // dataDetectorTypes={['lookupSuggestion','link']}
@@ -611,6 +637,7 @@ const Browser = ({ initInfo, containerStyle }) => {
             incognito={incognito}
             contentMode={contentMode}
             allowsInlineMediaPlayback={true}
+            mediaPlaybackRequiresUserAction={true}
             onScroll={handleScroll}
             forceDarkOn={true}
             allowsBackForwardNavigationGestures={true}
@@ -655,6 +682,7 @@ const Browser = ({ initInfo, containerStyle }) => {
             browserRef={browserRef}
             setShowBottomBar={setShowBottomBar}
             url={navState.url}
+            additionalTabSelectHandler={()=>{setIsSmileToScroll(false)}}
           />
         }
       </View>

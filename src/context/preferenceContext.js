@@ -1,12 +1,13 @@
 import createDataContext from './createDataContext';
-import { defaultSearchEngine } from '../util/appConstant';
+import { defaultSearchEngine, defaultSmileToScrollThreshold } from '../util/appConstant';
 import { storeData, getStoreData, getIcon, isEmpty } from '../util/misc';
 
 const preferenceReducer = (state, action) => {
     switch (action.type) {
         case 'get_user_perference':{
             const defaultPreference = {
-                searchEngine: defaultSearchEngine
+                searchEngine: defaultSearchEngine,
+                smileToScrollThreshold: defaultSmileToScrollThreshold
             }
             return action.payload ? action.payload : defaultPreference
         }

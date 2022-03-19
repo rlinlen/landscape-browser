@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
-import 'react-native-url-polyfill/auto';
 import { ModalPortal } from 'react-native-modals';
 import { StatusBar } from 'expo-status-bar';
+import 'react-native-url-polyfill/auto';
 
 
 import Main from './src/components/Main';
@@ -13,6 +13,7 @@ import { Provider as PerferenceProvider } from './src/context/preferenceContext'
 
 
 export default function App() {
+  
 
   return (
     // <View style={styles.container}>
