@@ -11,6 +11,7 @@ import { Context as TabContext } from '../context/tabContext';
 import { Context as FavoriteContext } from '../context/favoriteContext';
 import { Context as PreferenceContext } from '../context/preferenceContext';
 import { isEmpty } from '../util/appConstant'
+import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 
 const usePrevious = (value) => {
     const ref = useRef();
@@ -50,6 +51,15 @@ const Main = () => {
         getAllFavs()
         getUserPreference()
     }, [])
+
+    useEffect(()=>{
+        (async () => {
+            const { status } = await requestTrackingPermissionsAsync();
+            if (status === 'granted') {
+            //   console.log('Yay! I have user permission to track data');
+            }
+          })();
+    },[])
 
     let safeAreaPosition = currentState?.hideSafeAreaButtom ? 'absolute' : 'relative'
     let currentTab = currentState?.currentTab

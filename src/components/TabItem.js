@@ -5,17 +5,17 @@ import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 const { width, height } = Dimensions.get('window');
 // orientation must fixed
 const SCREEN_WIDTH = width < height ? width : height;
-const isSmallDevice = SCREEN_WIDTH <= 414;
-const numColumns = isSmallDevice ? 2 : 3;
+// const isSmallDevice = SCREEN_WIDTH <= 414;
+const numColumns =  2 ;
 // const SCREEN_HEIGHT = width < height ? height : width;
 
-const ITEM_OFFSET = 10;
+const ITEM_OFFSET = 20;
 const ITEM_MARGIN = ITEM_OFFSET * 2;
 const ITEM_HEIGHT = (SCREEN_WIDTH - ITEM_MARGIN) / numColumns + ITEM_OFFSET;
 
 const TabItem = ({ item, handleTabPressOut, handleTabClose }) => {
     // console.log(`item.icon:`)
-    // console.log(item.icon)
+    // console.log(numColumns)
 
     let showIcon = false
     if (item.icon && item.icon.startsWith("data:image")){
@@ -23,7 +23,12 @@ const TabItem = ({ item, handleTabPressOut, handleTabClose }) => {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container,{
+            margin: ITEM_OFFSET,
+            width: (SCREEN_WIDTH) / numColumns - ITEM_MARGIN,
+            // width: SCREEN_WIDTH/2,
+            height: ITEM_HEIGHT,
+        }]}>
             <Pressable
                 onPress={(e) => handleTabPressOut(item)}
             >
@@ -66,10 +71,7 @@ const TabItem = ({ item, handleTabPressOut, handleTabClose }) => {
 const styles = StyleSheet.create({
     container: {
         // justifyContent: 'space-between',
-        margin: ITEM_MARGIN,
         borderRadius: 20,
-        width: (SCREEN_WIDTH - ITEM_MARGIN) / numColumns - ITEM_MARGIN - ITEM_OFFSET,
-        height: ITEM_HEIGHT,
         backgroundColor: 'white',
         flexDirection: 'column',
         // overflow: 'hidden'

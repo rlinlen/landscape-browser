@@ -10,7 +10,7 @@ import { Context as TabContext } from '../context/tabContext';
 const { width, height } = Dimensions.get('window');
 const SCREEN_WIDTH = width < height ? width : height;
 const isSmallDevice = SCREEN_WIDTH <= 414;
-const numColumns = isSmallDevice ? 2 : 3;
+const numColumns = isSmallDevice ? 2 : 4;
 
 const ITEM_OFFSET = 10;
 const ITEM_MARGIN = ITEM_OFFSET * 2;
@@ -23,7 +23,7 @@ const TabView = ({ numColumns, isLandscape }) => {
 
     const tabviewRef = useRef(null);
 
-    
+    // console.log(numColumns)
     useEffect(()=>{
         let currentTab = currentState?.currentTab
 
@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,1)'
+        // backgroundColor: 'red'
     },
 
 });

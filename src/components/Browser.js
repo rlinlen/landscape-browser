@@ -49,6 +49,7 @@ const Browser = ({ initInfo, containerStyle }) => {
   const [showBottomBar, setShowBottomBar] = useState(true);
   const [loadProgress, setLoadProgress] = useState(0);
   const [showSearchEngineSelector, setShowSearchEngineSelector] = useState(false);
+  const [videoRotateCount, setVideoRotateCount] = useState(1);
 
 
   // const [isScrollUp, setIsScrollUp] = useState(false);
@@ -122,7 +123,67 @@ const Browser = ({ initInfo, containerStyle }) => {
       direction = transformMatrix[nextDirectionPos]
     }
 
+
+    // console.log(direction)
     await ScreenOrientation.lockAsync(direction);
+
+
+  }
+
+  const handleIncreaseFontSize = () => {
+    const JS = `
+    var eles = document.getElementsByTagName("*");
+    for (var i = 0; i < eles.length; i++) {
+        var k = parseInt(eles[i].style.fontSize);
+        eles[i].style.fontSize = 1.1*k;
+    };
+        `
+    browserRef.current.injectJavaScript(JS)
+  }
+
+  const handleRotateVideo = async (browserRef) => {
+
+    // let currentOritentation = await ScreenOrientation.getOrientationLockAsync();
+    // // let direction = ScreenOrientation.OrientationLock.DEFAULT
+    // if ((currentOritentation == ScreenOrientation.OrientationLock.LANDSCAPE_RIGHT) || (currentOritentation == ScreenOrientation.OrientationLock.LANDSCAPE_LEFT)) {
+    //   const rotateVideo = `
+    //   var videos = document.getElementsByTagName("video");
+    //   for (var i = 0; i < videos.length; i++) {
+    //       videos[i].style.webkitTransform = "scale(1) rotate(90deg)";
+    //       videos[i].style.transform = "scale(1) rotate(90deg)";
+    //   };
+    //   document.body.style.backgroundColor = 'blue';
+    //   `
+    //   browserRef.current.injectJavaScript(rotateVideo);
+    // } else {
+    //   const rotateVideo = `
+    //   var videos = document.getElementsByTagName("video");
+    //   for (var i = 0; i < videos.length; i++) {
+    //       videos[i].style.webkitTransform = "scale(1) rotate(0deg)";
+    //       videos[i].style.transform = "scale(1) rotate(0deg)";
+    //   };
+    //   document.body.style.backgroundColor = 'red';
+    //   `
+    //   browserRef.current.injectJavaScript(rotateVideo);
+    // }
+    let videoRotateDegree = videoRotateCount * 90;
+
+    const rotateVideo = `
+      var videos = document.getElementsByTagName("video");
+      for (var i = 0; i < videos.length; i++) {
+          videos[i].style.webkitTransform = "scale(1) rotate(${videoRotateDegree}deg)";
+          videos[i].style.transform = "scale(1) rotate(${videoRotateDegree}deg)";
+      };
+      // document.body.style.backgroundColor = 'blue';
+      // screen.orientation.lock('portrait');
+      `
+    setTimeout(() => {
+      browserRef.current.injectJavaScript(rotateVideo);
+      setVideoRotateCount(videoRotateCount + 1);
+      Alert.alert('rotate!')
+    }, 5000);
+
+
   }
 
   const handleNavigationStateChange = (navState) => {
@@ -241,12 +302,32 @@ const Browser = ({ initInfo, containerStyle }) => {
       if(p[i].style.fontSize){
         var s=parseInt(p[i].style.fontSize.replace('px',''));
       }else{
-        var s=12;
+        var s=16;
       }
       
-      s+=2;
+      s*=1.2;
       p[i].style.fontSize=s+'px'
+      p[i].style.lineHeight=1.1*s+'px'
+      // p[i].style.fontSize= '1.3rem'
+    };
+      true;
+    `
+    browserRef.current.injectJavaScript(jsIncreaseFont);
+  }
+  const handleTextDecrease = () => {
+    const jsIncreaseFont = `
+    var p=document.getElementsByTagName('*');
+    for(i=0;i<p.length;i++){
+      if(p[i].style.fontSize){
+        var s=parseInt(p[i].style.fontSize.replace('px',''));
+      }else{
+        var s=16;
+      }
       
+      s/=1.2;
+      // p[i].style.fontSize=s+'px'
+      p[i].style.fontSize=s+'px'
+      p[i].style.lineHeight=1.1*s+'px'
     };
       true;
     `
@@ -380,11 +461,6 @@ const Browser = ({ initInfo, containerStyle }) => {
               <MaterialCommunityIcons name="account-settings-outline" style={styles.addressBarIcon} color="white" />
             </MenuTrigger>
             <MenuOptions customStyles={optionsStyles}>
-              {/* <MenuOption onSelect={() => handleTextIncrease()}>
-                <View style={styles.menuOption}>
-                  <Text>A 100% A</Text>
-                </View>
-              </MenuOption> */}
               {/* <MenuOption onSelect={() => changeScreenOrientation()}>
                 <View style={styles.menuOption}>
                   <Text>Force Dark Theme</Text>
@@ -395,6 +471,18 @@ const Browser = ({ initInfo, containerStyle }) => {
                 <View style={styles.menuOption}>
                   <Text style={styles.menuOptionText}>Rotate Screen</Text>
                   <MaterialCommunityIcons name="phone-rotate-landscape" size={24} color="white" />
+                </View>
+              </MenuOption>
+              <MenuOption onSelect={() => handleTextIncrease()}>
+                <View style={styles.menuOption}>
+                  <Text style={styles.menuOptionText}>Increase Font Size</Text>
+                  <MaterialCommunityIcons name="format-font-size-increase" size={24} color="white" />
+                </View>
+              </MenuOption>
+              <MenuOption onSelect={() => handleTextDecrease()}>
+                <View style={styles.menuOption}>
+                  <Text style={styles.menuOptionText}>Decrease Font Size</Text>
+                  <MaterialCommunityIcons name="format-font-size-decrease" size={24} color="white" />
                 </View>
               </MenuOption>
               {/* <MenuOption onSelect={handleChangeIncognito}>
@@ -442,22 +530,33 @@ const Browser = ({ initInfo, containerStyle }) => {
           />
         </View>
         {currentOrientation &&
-          <View style={{ paddingLeft: 14 }}>
-            <TouchableOpacity
-              // style={styles.changeOrientationButton}
-              onPress={() => browserRef.current.injectJavaScript(`
-              window.scroll({
-                top: 0, 
-                left: 0, 
-                behavior: 'smooth'
-              })
-              `
-              )}
-              style={[styles.barTouch]}
-            >
-              <MaterialCommunityIcons name="format-align-top" size={24} color="white" />
-            </TouchableOpacity>
-          </View>
+          <>
+            {/* <View style={{ paddingLeft: 14 }}>
+              <TouchableOpacity
+                // style={styles.changeOrientationButton}
+                onPress={() => handleRotateVideo(browserRef)}
+                style={[styles.barTouch]}
+              >
+                <MaterialCommunityIcons name="format-rotate-90" size={24} color="white" />
+              </TouchableOpacity>
+            </View> */}
+            <View style={{ paddingLeft: 20, paddingRight: 8 }}>
+              <TouchableOpacity
+                // style={styles.changeOrientationButton}
+                onPress={() => browserRef.current.injectJavaScript(`
+            window.scroll({
+              top: 0, 
+              left: 0, 
+              behavior: 'smooth'
+            })
+            `
+                )}
+                style={[styles.barTouch]}
+              >
+                <MaterialCommunityIcons name="format-align-top" size={24} color="white" />
+              </TouchableOpacity>
+            </View>
+          </>
         }
         {enterFavSelect ? <TouchableOpacity
           // style={styles.changeOrientationButton}
@@ -500,7 +599,7 @@ const Browser = ({ initInfo, containerStyle }) => {
             //   console.log(request)
             //   return true
             // })}
-            injectJavaScript={injectedJS}
+            injectJavaScript={injectedJS(currentOrientation)}
             onMessage={() => { }}
             // automaticallyAdjustContentInsets={false}
             // dataDetectorTypes={['lookupSuggestion','link']}

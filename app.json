@@ -16,10 +16,10 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "requireFullScreen": true,
       "bundleIdentifier": "org.lenlin.landscape-browser",
-      "buildNumber": "1.0.0.2",
+      "buildNumber": "1.0.0.4",
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true
       }
@@ -36,6 +36,14 @@
     "description": "",
     "locales": {
       "zh": "./languages/zh.json"
-    }
+    },
+    "plugins": [
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "In the future we may use tracking to imporve Ads experience. Currently no tracking data is in use."
+        }
+      ]
+    ]
   }
 }

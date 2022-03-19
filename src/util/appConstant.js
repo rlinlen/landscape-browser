@@ -18,9 +18,27 @@ export const defaultIcon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAA
 export const addressBarHeight = 50
 export const browserActionBarHeight = 48
 
-export const injectedJS = `
-// var a = document.getElementsByTagName("a");
-// for (i=0; i<a.length; i++)
-//     if (a[i].target == "_blank")
-//         a[i].target = "_self";
-`;
+export const injectedJS =  (isLandscape) => {
+
+    if (isLandscape){
+        return `
+        // console.log('test');
+        // var videos = document.getElementsByTagName("video");
+        // for (var i = 0; i < videos.length; i++) {
+        //     videos[i].style.webkitTransform = "scale(1) rotate(180deg)";
+        //     videos[i].style.transform = "scale(1) rotate(180deg)";
+        // };
+        `
+
+    } else {
+        return `
+    // var a = document.getElementsByTagName("a");
+    // for (i=0; i<a.length; i++)
+    //     if (a[i].target == "_blank")
+    //         a[i].target = "_self";
+    `;
+        
+    }
+
+    
+}
