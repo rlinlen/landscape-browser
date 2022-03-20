@@ -19,7 +19,7 @@
       "supportsTablet": false,
       "requireFullScreen": true,
       "bundleIdentifier": "org.lenlin.landscape-browser",
-      "buildNumber": "1.0.0.4",
+      "buildNumber": "1.0.0.7",
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true
       }

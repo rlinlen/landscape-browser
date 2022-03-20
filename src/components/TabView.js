@@ -112,7 +112,9 @@ const TabView = ({ numColumns, isLandscape }) => {
                 getItemLayout={(data, index) => (
                     {length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index}
                   )}
-                ListFooterComponent={<View style={{padding:20}}></View>}
+                ListFooterComponent={<View style={{padding:20}}
+                key={numColumns}
+                ></View>}
             />
             <TabActionBar tabNumber={tabState.length}/>
         </View>

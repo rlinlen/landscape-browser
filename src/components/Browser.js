@@ -23,6 +23,7 @@ import ProgressBar from './ProgressBar';
 import FavoriteView from './FavoriteView';
 import ModalPicker from './ModalPicker';
 import AutoScroll from './AutoScroll';
+import ModalSlider from './ModalSlider';
 
 
 const Browser = ({ initInfo, containerStyle }) => {
@@ -53,6 +54,8 @@ const Browser = ({ initInfo, containerStyle }) => {
   const [showBottomBar, setShowBottomBar] = useState(true);
   const [loadProgress, setLoadProgress] = useState(0);
   const [showSearchEngineSelector, setShowSearchEngineSelector] = useState(false);
+  const [showSmileToScrollThreshold, setShowSmileToScrollThreshold] = useState(false);
+  const [webViewPressing, setWebViewPressing] = useState(false);
   const [videoRotateCount, setVideoRotateCount] = useState(1);
   const [isSmileToScroll, setIsSmileToScroll] = useState(false);
 
@@ -351,10 +354,12 @@ const Browser = ({ initInfo, containerStyle }) => {
   const handlePressIn = evt => {
     // console.log(evt.nativeEvent.locationY)
     setScrollInitPos(evt.nativeEvent.locationY)
+    setWebViewPressing(true)
   }
   const handlePressOut = evt => {
     // console.log(evt.nativeEvent.locationY)
     try {
+      setWebViewPressing(false)
       let scrollFinPos = evt?.nativeEvent.locationY ? evt?.nativeEvent.locationY : 0
       // console.log(scrollFinPos)
       if (scrollInitPos && scrollFinPos) {
@@ -385,6 +390,9 @@ const Browser = ({ initInfo, containerStyle }) => {
   }
   const handleChooseSearchEngine = () => {
     setShowSearchEngineSelector(true)
+  }
+  const handleChooseSimleToScrollThreshold = () => {
+    setShowSmileToScrollThreshold(true)
   }
   const handleAbout = () => {
     // let alertContext = `感謝您使用枕邊瀏覽器。本App並不是要取代任何瀏覽器，亦不推薦做為日常使用。只有當你發現一個網站適合你睡前側躺且橫向瀏覽時，可使用本瀏覽器來鎖定方向。由於人手僅有一人請多包涵。如果您有更多想法或是發現問題，歡迎透過以下方式聯繫我:\nlen@lenlin.org \n v${version}`
@@ -524,6 +532,12 @@ const Browser = ({ initInfo, containerStyle }) => {
                   <MaterialCommunityIcons name="bookmark-check" size={24} color="white" />
                 </View>
               </MenuOption>
+              <MenuOption onSelect={handleChooseSimleToScrollThreshold}>
+                <View style={styles.menuOption}>
+                  <Text style={styles.menuOptionText}>Set SmileToScroll Threshold</Text>
+                  <MaterialCommunityIcons name="face-recognition" size={22} color="white" />
+                </View>
+              </MenuOption>
               <MenuOption onSelect={handleChooseSearchEngine}>
                 <View style={styles.menuOption}>
                   <Text style={styles.menuOptionText}>Set Search Engine</Text>
@@ -600,7 +614,8 @@ const Browser = ({ initInfo, containerStyle }) => {
       {currentTab == initInfo.id && isSmileToScroll && <AutoScroll 
         browserRef={browserRef} 
         isLandscape={currentOrientation}
-        smileToScrollThreshold={smileToScrollThreshold} 
+        smileToScrollThreshold={smileToScrollThreshold}
+        pause={webViewPressing}
       />
       }
       <View style={{ flex: 1, backgroundColor: 'black' }}>
@@ -675,6 +690,13 @@ const Browser = ({ initInfo, containerStyle }) => {
           selectedValue={searchEnginePreference}
         >
         </ModalPicker>
+        <ModalSlider
+          visible={showSmileToScrollThreshold}
+          setVisible={setShowSmileToScrollThreshold}
+          dialogContent={`Set the threshold for Smile dectector (default:${defaultSmileToScrollThreshold}). Larger value means that it needs a big smile from you to trigger.`}
+          handleValueChange={(value) => updateUserPreference({ smileToScrollThreshold: value })}
+          selectedValue={smileToScrollThreshold}
+        />
         {showBottomBar &&
           <BrowserActionBar
             canGoForward={navState.canGoForward}
